@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskly — Task Manager & Calendar Planner</title>
+  <meta name="description" content="A simple, fast, intuitive task manager with an integrated monthly calendar overview. Distraction-free grey and white design.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Viewport Container (Fluid Landscape/Portrait Responsive) -->
+  <div class="app-viewport">
+
+    <!-- Header Navbar -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="app-logo">T</div>
+        <div>
+          <h1 class="brand-name">Taskly</h1>
+          <p class="brand-subtitle">Calendar & Task Planner</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="user-badge-btn" id="userBadgeBtn" title="Account / Sign In">
+          <span id="userBadgeText">👤 Sign In</span>
+        </button>
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+        <button class="pill-btn primary" id="createTaskHeaderBtn">
+          <span>+</span> New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs (FR-03) -->
+    <nav class="app-nav">
+      <button class="nav-tab active" data-view="viewCalendar">
+        <span class="tab-icon">📅</span> Calendar
+      </button>
+      <button class="nav-tab" data-view="viewTasks">
+        <span class="tab-icon">📋</span> My Tasks
+      </button>
+      <button class="nav-tab" data-view="viewProfile">
+        <span class="tab-icon">👤</span> Profile
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+
+      <!-- TAB 1: CALENDAR VIEW (FR-02, FR-04, FR-05, FR-06, FR-08) -->
+      <section id="viewCalendar" class="tab-view active">
+
+        <!-- AI Smart Input Card (FR-08) -->
+        <div class="ai-smart-card">
+          <div class="ai-header">
+            <span class="ai-title">⚡ AI Smart Quick Input</span>
+            <span style="font-size:11px; color:var(--text-tertiary);">Format Recommendations</span>
+          </div>
+          <div class="ai-input-group">
+            <input type="text" id="aiBarInput" class="ai-input" placeholder="Type naturally e.g. 'Work meeting tomorrow at 3pm'...">
+            <button class="pill-btn primary" id="aiBarBtn">Parse & Add</button>
+          </div>
+          
+          <!-- Recommendation Format Pills -->
+          <div class="ai-recommendations">
+            <span class="rec-label">Try Examples:</span>
+            <button class="ai-rec-pill" data-example="Work meeting tomorrow at 3pm">Work meeting tomorrow at 3pm</button>
+            <button class="ai-rec-pill" data-example="Calculus Exam on 2026-08-25 at 10am">Calculus Exam 2026-08-25 10am</button>
+            <button class="ai-rec-pill" data-example="Project presentation next Friday">Project next Friday</button>
+            <button class="ai-rec-pill" data-example="Assignment due 25th August at 11:59pm">Assignment 25th Aug 11:59pm</button>
+          </div>
+
+          <div id="aiPreviewBox" class="ai-preview-box"></div>
+        </div>
+
+        <!-- Month Calendar Header & Controls (FR-05) -->
+        <div class="calendar-controls">
+          <div class="month-selector">
+            <button class="icon-btn" id="prevMonthBtn" title="Previous Month">❮</button>
+            <button class="month-title-btn" id="monthTitleBtn">August 2026</button>
+            <button class="icon-btn" id="nextMonthBtn" title="Next Month">❯</button>
+          </div>
+          <div class="calendar-quick-actions">
+            <button class="pill-btn" id="todayBtn">Today</button>
+          </div>
+        </div>
+
+        <!-- Responsive Split Grid (Adapts automatically between portrait & landscape) -->
+        <div class="calendar-view-split">
+          
+          <!-- Month Calendar Grid Card (FR-04) -->
+          <div class="calendar-card">
+            <div class="calendar-days-header">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+            </div>
+            <div id="calendarGrid" class="calendar-grid"></div>
+          </div>
+
+          <!-- Tap-to-View Day Schedule Panel (FR-06) -->
+          <div class="day-schedule-panel" id="daySchedulePanel">
+            <div class="panel-header">
+              <div class="panel-title" id="dayScheduleTitle">Tasks for Today</div>
+              <button class="pill-btn" id="addDayTaskBtn">+ Add Task for Date</button>
+            </div>
+            <div id="dayTaskList" class="task-list"></div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 2: MY TASKS VIEW (FR-07, FR-09) -->
+      <section id="viewTasks" class="tab-view">
+
+        <!-- Controls Bar: Search & Status Filters -->
+        <div class="task-controls-bar">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="taskSearchInput" class="search-input" placeholder="Search tasks by title, note, or tag...">
+          </div>
+
+          <div class="status-filter-group">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="todo">To Do</button>
+            <button class="filter-btn" data-filter="inprogress">In Progress</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+          </div>
+        </div>
+
+        <!-- My Tasks List Container -->
+        <div id="myTasksList" class="task-list"></div>
+
+      </section>
+
+      <!-- TAB 3: PROFILE & METRICS VIEW -->
+      <section id="viewProfile" class="tab-view">
+
+        <div class="profile-dashboard">
+          
+          <!-- Account Card -->
+          <div class="profile-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:var(--accent-primary); color:var(--text-inverse); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700;">
+                  👤
+                </div>
+                <div>
+                  <h2 style="font-size:18px; font-weight:700;" id="accountName">Guest User</h2>
+                  <p style="font-size:12px; color:var(--text-tertiary);" id="accountEmail">Sign in to save tasks across devices</p>
+                </div>
+              </div>
+              <button class="pill-btn primary" id="authActionButton">Sign In / Register</button>
+            </div>
+          </div>
+
+          <!-- User Metrics Card -->
+          <div class="profile-card">
+            <h2 style="font-size:16px; font-weight:700;">Productivity Metrics</h2>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-number" id="statTotalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number" id="statCompletedTasks">0</div>
+                <div class="stat-label">Completed</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number" id="statInProgressTasks">0</div>
+                <div class="stat-label">In Progress</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number" id="statCompletionRate">0%</div>
+                <div class="stat-label">Completion Rate</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences & App Management -->
+          <div class="profile-card">
+            <h2 style="font-size:16px; font-weight:700;">App & Data Actions</h2>
+            
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <strong>Walkthrough Intro</strong>
+                  <div style="font-size:12px; color:var(--text-tertiary);">Re-run the initial 3-step walkthrough screens.</div>
+                </div>
+                <button class="pill-btn" id="replayOnboardingBtn">Replay Walkthrough</button>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+                <div>
+                  <strong>Browser Notifications & Alarms</strong>
+                  <div style="font-size:12px; color:var(--text-tertiary);" id="notifStatusText">Enable native desktop alarms for scheduled tasks.</div>
+                </div>
+                <button class="pill-btn primary" id="enableNotificationsBtn">Enable Notifications</button>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+                <div>
+                  <strong>Sample Demo Data</strong>
+                  <div style="font-size:12px; color:var(--text-tertiary);">Optionally populate initial sample student tasks.</div>
+                </div>
+                <button class="pill-btn" id="loadSampleDataBtn">Load Sample Tasks</button>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+                <div>
+                  <strong>Backup & Restore</strong>
+                  <div style="font-size:12px; color:var(--text-tertiary);">Export or import your tasks in JSON format.</div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="pill-btn" id="exportDataBtn">Export JSON</button>
+                  <button class="pill-btn" id="importDataBtn">Import JSON</button>
+                  <input type="file" id="importFileInput" accept=".json" style="display:none;">
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+                <div>
+                  <strong>Clear Task Data</strong>
+                  <div style="font-size:12px; color:var(--text-tertiary);">Remove all tasks from current account.</div>
+                </div>
+                <button class="pill-btn" id="clearUserDataBtn" style="border-color:#DC2626; color:#DC2626;">Clear Tasks</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRD Document Info -->
+          <div style="text-align:center; font-size:12px; color:var(--text-tertiary); padding:10px;">
+            Taskly v1.0 • Grey & White Aesthetic Theme (NFR-01)
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- AUTHENTICATION MODAL DIALOG -->
+  <div id="authModalOverlay" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Account Sign In</h3>
+        <button class="icon-btn" id="authModalCloseBtn" style="width:30px; height:30px;">✕</button>
+      </div>
+
+      <!-- Auth Tab Switcher -->
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" data-auth-tab="login">Sign In</button>
+        <button class="auth-tab-btn" data-auth-tab="register">Create Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="loginForm" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" class="form-input" placeholder="user@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
+        </div>
+        <div class="modal-footer" style="margin-top:8px;">
+          <button type="submit" class="pill-btn primary" style="width:100%;">Sign In</button>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" style="display:none; flex-direction:column; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="registerName">Full Name</label>
+          <input type="text" id="registerName" class="form-input" placeholder="Alex Johnson" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="registerEmail">Email Address</label>
+          <input type="email" id="registerEmail" class="form-input" placeholder="user@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" class="form-input" placeholder="••••••••" required>
+        </div>
+        <div class="modal-footer" style="margin-top:8px;">
+          <button type="submit" class="pill-btn primary" style="width:100%;">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ONBOARDING WALKTHROUGH OVERLAY MODAL (FR-01) -->
+  <div id="onboardingOverlay" class="onboarding-overlay hidden">
+    <div class="onboarding-card">
+      <div class="onboarding-header">
+        <button id="onboardingSkipBtn" class="skip-btn">Skip</button>
+      </div>
+
+      <div class="slides-viewport">
+        <div id="slidesTrack" class="slides-track">
+          
+          <!-- Slide 1 -->
+          <div class="slide-item">
+            <div class="slide-graphic">📋</div>
+            <h2 class="slide-title">Welcome to Taskly</h2>
+            <p class="slide-desc">
+              A clean, distraction-free task planner designed for students, professionals, and daily organization.
+            </p>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="slide-item">
+            <div class="slide-graphic">📅</div>
+            <h2 class="slide-title">Integrated Month View</h2>
+            <p class="slide-desc">
+              Visualize your entire month at a glance. Plot assignments, exams, and projects with tap-to-view date details.
+            </p>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="slide-item">
+            <div class="slide-graphic">⚡</div>
+            <h2 class="slide-title">AI Smart Input</h2>
+            <p class="slide-desc">
+              Type naturally like "Exam next Friday at 10am" and let AI parse and schedule your tasks effortlessly.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="onboarding-footer">
+        <div class="pagination-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <button id="onboardingNextBtn" class="pill-btn primary">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK CREATE / EDIT MODAL DIALOG (FR-07) -->
+  <div id="taskModalOverlay" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Create New Task</h3>
+        <button class="icon-btn" id="modalCloseBtn" style="width:30px; height:30px;">✕</button>
+      </div>
+
+      <form id="taskForm">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label" for="inputTaskTitle">Task Title *</label>
+          <input type="text" id="inputTaskTitle" class="form-input" placeholder="e.g. Software Engineering Assignment" required>
+        </div>
+
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label class="form-label" for="inputTaskCategory">Category</label>
+            <select id="inputTaskCategory" class="form-select">
+              <option value="Work">Work</option>
+              <option value="Assignment">Assignment</option>
+              <option value="Exam">Exam</option>
+              <option value="Project">Project</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inputTaskPriority">Priority</label>
+            <select id="inputTaskPriority" class="form-select">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label class="form-label" for="inputTaskDueDate">Due Date</label>
+            <input type="date" id="inputTaskDueDate" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inputTaskDueTime">Due Time</label>
+            <input type="time" id="inputTaskDueTime" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label" for="inputTaskReminder">Reminder Alarm</label>
+          <select id="inputTaskReminder" class="form-select">
+            <option value="at_event" selected>🔔 At time of event</option>
+            <option value="5_min">🔔 5 minutes before</option>
+            <option value="15_min">🔔 15 minutes before</option>
+            <option value="1_hour">🔔 1 hour before</option>
+            <option value="1_day">🔔 1 day before</option>
+            <option value="none">🔕 No reminder</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label" for="inputTaskNotes">Optional Notes</label>
+          <textarea id="inputTaskNotes" class="form-textarea" rows="3" placeholder="Additional details, guidelines, or location..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="pill-btn" id="modalCancelBtn">Cancel</button>
+          <button type="submit" class="pill-btn primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- IN-APP ALARM / REMINDER MODAL -->
+  <div id="alarmModalOverlay" class="modal-overlay hidden">
+    <div class="modal-card" style="text-align:center; border:2px solid var(--accent-primary);">
+      <div style="font-size:48px; animation: ring 1s infinite alternate;">⏰</div>
+      <h3 style="font-size:20px; font-weight:700; color:var(--text-primary);" id="alarmTitle">Task Alarm Reminder</h3>
+      <p style="font-size:13px; color:var(--text-secondary);" id="alarmTime">Due now</p>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+        <button class="pill-btn primary" id="alarmCompleteBtn">✓ Mark as Completed</button>
+        <button class="pill-btn" id="alarmSnoozeBtn">🔔 Snooze (5 mins)</button>
+        <button class="pill-btn" id="alarmDismissBtn" style="border-color:var(--border-main);">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
