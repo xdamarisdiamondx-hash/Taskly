@@ -1,6 +1,6 @@
 /**
  * Taskly Main Application Entry Point
- * Orchestrates navigation tabs, theme engine, Auth modal, task state, and notifications.
+ * Orchestrates 5 bottom navigation screens, theme color palette engine, Focus Timer, and Analytics.
  */
 
 import { Storage } from './storage.js';
@@ -8,12 +8,14 @@ import { Auth } from './auth.js';
 import { Onboarding } from './onboarding.js';
 import { CalendarView } from './calendar.js';
 import { TaskManager } from './taskManager.js';
+import { FocusTimer } from './focusTimer.js';
+import { Analytics } from './analytics.js';
 import { ProfileView } from './profile.js';
 import { Notifications } from './notifications.js';
 
 class App {
   constructor() {
-    this.currentTab = 'calendar';
+    this.currentTab = 'viewHome';
   }
 
   init() {
@@ -24,6 +26,8 @@ class App {
     // Initialize Components
     CalendarView.init((action, payload) => this.handleCalendarAction(action, payload));
     TaskManager.init((msg) => this.handleTaskChange(msg));
+    FocusTimer.init((msg) => this.handleTaskChange(msg));
+    Analytics.init();
     ProfileView.init((action, payload) => this.handleProfileAction(action, payload));
     Notifications.init((msg) => this.handleTaskChange(msg));
 
@@ -38,7 +42,9 @@ class App {
   initTheme() {
     const savedTheme = Storage.getTheme();
     document.documentElement.setAttribute('data-theme', savedTheme);
-    this.updateThemeIcon(savedTheme);
+
+    const activeColor = Storage.getColorTheme();
+    document.documentElement.setAttribute('data-color-theme', activeColor);
 
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     if (themeToggleBtn) {
@@ -47,32 +53,24 @@ class App {
         const next = current === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', next);
         Storage.setTheme(next);
-        this.updateThemeIcon(next);
         this.showToast(`Switched to ${next === 'dark' ? 'Dark' : 'Light'} theme`);
       });
     }
   }
 
-  updateThemeIcon(theme) {
-    const iconSpan = document.getElementById('themeIcon');
-    if (iconSpan) {
-      iconSpan.textContent = theme === 'dark' ? '☀️' : '🌙';
-    }
-  }
-
   initNavigation() {
-    const navTabs = document.querySelectorAll('.nav-tab');
-    const tabViews = document.querySelectorAll('.tab-view');
+    const navItems = document.querySelectorAll('.bottom-nav-item');
+    const screenViews = document.querySelectorAll('.screen-view');
 
-    navTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetViewId = tab.getAttribute('data-view');
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const targetViewId = item.getAttribute('data-screen');
         if (!targetViewId) return;
 
-        navTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+        navItems.forEach(t => t.classList.remove('active'));
+        item.classList.add('active');
 
-        tabViews.forEach(view => {
+        screenViews.forEach(view => {
           if (view.id === targetViewId) {
             view.classList.add('active');
           } else {
@@ -84,6 +82,15 @@ class App {
         this.refreshAllViews();
       });
     });
+
+    // View All links on Home
+    const viewAllTasksLink = document.getElementById('viewAllTasksLink');
+    if (viewAllTasksLink) {
+      viewAllTasksLink.addEventListener('click', () => {
+        const tasksTab = document.querySelector('[data-screen="viewTasks"]');
+        if (tasksTab) tasksTab.click();
+      });
+    }
   }
 
   initAuthModal() {
@@ -92,18 +99,12 @@ class App {
     this.authTabs = document.querySelectorAll('.auth-tab-btn');
     this.loginForm = document.getElementById('loginForm');
     this.registerForm = document.getElementById('registerForm');
-    this.userBadgeBtn = document.getElementById('userBadgeBtn');
+    this.userAvatarBadge = document.getElementById('userAvatarBadge');
 
-    if (this.userBadgeBtn) {
-      this.userBadgeBtn.addEventListener('click', () => {
-        const user = Auth.getCurrentUser();
-        if (user) {
-          // Switch to Profile tab
-          const profileTabBtn = document.querySelector('[data-view="viewProfile"]');
-          if (profileTabBtn) profileTabBtn.click();
-        } else {
-          this.openAuthModal();
-        }
+    if (this.userAvatarBadge) {
+      this.userAvatarBadge.addEventListener('click', () => {
+        const profileTab = document.querySelector('[data-screen="viewProfile"]');
+        if (profileTab) profileTab.click();
       });
     }
 
@@ -117,7 +118,6 @@ class App {
       });
     }
 
-    // Auth Tab Switching (Login vs Register)
     this.authTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         this.authTabs.forEach(t => t.classList.remove('active'));
@@ -134,7 +134,6 @@ class App {
       });
     });
 
-    // Handle Login Form Submit
     if (this.loginForm) {
       this.loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -153,7 +152,6 @@ class App {
       });
     }
 
-    // Handle Register Form Submit
     if (this.registerForm) {
       this.registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -175,26 +173,24 @@ class App {
   }
 
   openAuthModal() {
-    if (this.authModalOverlay) {
-      this.authModalOverlay.classList.remove('hidden');
-    }
+    if (this.authModalOverlay) this.authModalOverlay.classList.remove('hidden');
   }
 
   closeAuthModal() {
-    if (this.authModalOverlay) {
-      this.authModalOverlay.classList.add('hidden');
-    }
+    if (this.authModalOverlay) this.authModalOverlay.classList.add('hidden');
   }
 
   updateUserHeaderBadge() {
     const user = Auth.getCurrentUser();
-    const badgeText = document.getElementById('userBadgeText');
-    if (badgeText) {
-      if (user) {
-        badgeText.textContent = `👤 ${user.name}`;
-      } else {
-        badgeText.textContent = `👤 Sign In`;
-      }
+    const avatarBadge = document.getElementById('userAvatarBadge');
+    const headerUserName = document.getElementById('headerUserName');
+
+    if (user) {
+      if (avatarBadge) avatarBadge.textContent = user.name.charAt(0).toUpperCase();
+      if (headerUserName) headerUserName.textContent = user.name;
+    } else {
+      if (avatarBadge) avatarBadge.textContent = 'T';
+      if (headerUserName) headerUserName.textContent = 'Teefah';
     }
   }
 
@@ -202,7 +198,7 @@ class App {
     if (action === 'create_for_date') {
       TaskManager.openCreateModal(payload.date);
     } else if (action === 'cycle_status') {
-      TaskManager.cycleTaskStatus(payload.id);
+      TaskManager.toggleTaskStatus(payload.id);
     } else if (action === 'edit') {
       TaskManager.openEditModal(payload.id);
     } else if (action === 'delete') {
@@ -212,9 +208,7 @@ class App {
 
   handleTaskChange(msg) {
     this.refreshAllViews();
-    if (msg) {
-      this.showToast(msg);
-    }
+    if (msg) this.showToast(msg);
   }
 
   handleProfileAction(action, payload) {
@@ -224,20 +218,18 @@ class App {
       this.updateUserHeaderBadge();
       this.refreshAllViews();
       this.showToast('Logged out');
-    } else if (action === 'replay_onboarding') {
-      Onboarding.show();
-    } else if (action === 'data_imported') {
+    } else if (action === 'color_theme_changed') {
+      this.showToast(`Switched palette theme`);
+    } else if (action === 'data_imported' || action === 'data_reset') {
       this.refreshAllViews();
-      this.showToast('Tasks updated!');
-    } else if (action === 'data_reset') {
-      this.refreshAllViews();
-      this.showToast('Tasks cleared');
     }
   }
 
   refreshAllViews() {
+    TaskManager.renderAllViews();
     CalendarView.render();
-    TaskManager.renderMyTasksView();
+    FocusTimer.populateTaskSelector();
+    Analytics.render();
     ProfileView.render();
   }
 

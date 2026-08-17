@@ -1,7 +1,6 @@
 /**
  * Storage Manager for Taskly App
- * Handles per-user isolated task storage, onboarding state, and settings.
- * Initial tasks state for new users is completely EMPTY [].
+ * Handles per-user isolated task storage, onboarding state, active color palette theme, and settings.
  */
 
 import { Auth } from './auth.js';
@@ -9,7 +8,8 @@ import { Auth } from './auth.js';
 const STORAGE_KEYS = {
   TASKS_PREFIX: 'taskly_tasks_',
   ONBOARDING: 'taskly_onboarding_completed',
-  THEME: 'taskly_theme'
+  THEME: 'taskly_theme',
+  COLOR_THEME: 'taskly_color_theme'
 };
 
 function getUserStorageKey() {
@@ -20,7 +20,7 @@ function getUserStorageKey() {
   return STORAGE_KEYS.TASKS_PREFIX + 'guest';
 }
 
-// Sample seed tasks generator (only loaded on explicit user request via Profile)
+// Sample seed tasks generator (loaded on demand via Profile or for initial testing)
 export function getSampleDemoTasks() {
   const today = new Date();
   const formatDate = (offsetDays) => {
@@ -35,35 +35,63 @@ export function getSampleDemoTasks() {
   return [
     {
       id: 'task-101',
-      title: 'Complete Software Architecture Assignment',
-      category: 'Assignment',
+      title: 'Call Bethel',
+      category: 'School Work',
       priority: 'High',
-      status: 'inprogress',
+      status: 'todo',
       dueDate: formatDate(0),
-      dueTime: '17:00',
-      notes: 'Submit PDF report to student portal.',
+      dueTime: '10:00',
+      isShared: false,
+      notes: 'Discuss software architecture project.',
       createdAt: new Date().toISOString()
     },
     {
       id: 'task-102',
-      title: 'Midterm Calculus Exam',
-      category: 'Exam',
-      priority: 'High',
+      title: 'Make flashcards',
+      category: 'School Work',
+      priority: 'Medium',
       status: 'todo',
-      dueDate: formatDate(3),
-      dueTime: '10:00',
-      notes: 'Chapters 4 to 8. Bring calculator.',
+      dueDate: formatDate(0),
+      dueTime: '19:00',
+      isShared: false,
+      notes: 'Prepare Calculus study cards for midterm.',
       createdAt: new Date().toISOString()
     },
     {
       id: 'task-103',
-      title: 'Group Project Brainstorming',
-      category: 'Project',
+      title: 'Lay the bed',
+      category: 'House Chores',
+      priority: 'Low',
+      status: 'completed',
+      dueDate: formatDate(-1),
+      dueTime: '08:00',
+      isShared: false,
+      notes: 'Morning routine.',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'task-104',
+      title: "confirm tope's invitation",
+      category: 'Invitation List',
+      priority: 'Low',
+      status: 'completed',
+      dueDate: formatDate(-1),
+      dueTime: '12:00',
+      isShared: false,
+      notes: 'RSVP to party invitation.',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'task-105',
+      title: 'Track water intake',
+      category: 'Health & Wellness',
       priority: 'Medium',
-      status: 'todo',
-      dueDate: formatDate(1),
-      dueTime: '14:30',
-      notes: 'Discuss wireframes and schema.',
+      status: 'inprogress',
+      dueDate: formatDate(0),
+      dueTime: '21:00',
+      isShared: true,
+      assignees: ['@Me', '@Mojo', '@Tee'],
+      notes: 'Daily 3-liter hydration goal.',
       createdAt: new Date().toISOString()
     }
   ];
@@ -96,6 +124,8 @@ export const Storage = {
       id: 'task-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
       createdAt: new Date().toISOString(),
       status: 'todo',
+      isShared: task.isShared || false,
+      assignees: task.assignees || ['@Me'],
       ...task
     };
     tasks.unshift(newTask);
@@ -134,6 +164,14 @@ export const Storage = {
 
   setTheme(theme) {
     localStorage.setItem(STORAGE_KEYS.THEME, theme);
+  },
+
+  getColorTheme() {
+    return localStorage.getItem(STORAGE_KEYS.COLOR_THEME) || 'purple';
+  },
+
+  setColorTheme(color) {
+    localStorage.setItem(STORAGE_KEYS.COLOR_THEME, color);
   },
 
   loadSampleDemoData() {

@@ -1,385 +1,403 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-color-theme="purple">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taskly — Task Manager & Calendar Planner</title>
-  <meta name="description" content="A simple, fast, intuitive task manager with an integrated monthly calendar overview. Distraction-free grey and white design.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Taskly — Premium Task Manager & Productivity App</title>
+  <meta name="description" content="Manage your tasks with intentionality. Clean, soft purple task manager with Focus Timer, Analytics, Shared Tasks, and Calendar.">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <!-- App Viewport Container (Fluid Landscape/Portrait Responsive) -->
+  <!-- App Viewport Container (Mobile Optimized & Responsive) -->
   <div class="app-viewport">
 
-    <!-- Header Navbar -->
-    <header class="app-header">
-      <div class="brand-section">
-        <div class="app-logo">T</div>
-        <div>
-          <h1 class="brand-name">Taskly</h1>
-          <p class="brand-subtitle">Calendar & Task Planner</p>
+    <!-- Top Greeting Header Bar -->
+    <header class="top-greeting-header">
+      <div class="greeting-left">
+        <div class="user-avatar-badge" id="userAvatarBadge">T</div>
+        <div class="greeting-text">
+          <span class="greeting-subtitle">Good Morning!</span>
+          <h1 class="greeting-title" id="headerUserName">Teefah</h1>
         </div>
       </div>
 
-      <div class="header-actions">
-        <button class="user-badge-btn" id="userBadgeBtn" title="Account / Sign In">
-          <span id="userBadgeText">👤 Sign In</span>
-        </button>
-        <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
-          <span id="themeIcon">🌙</span>
-        </button>
-        <button class="pill-btn primary" id="createTaskHeaderBtn">
-          <span>+</span> New Task
-        </button>
+      <div class="header-actions-right">
+        <button class="icon-btn-circle" id="themeToggleBtn" title="Toggle Light/Dark Mode">🌙</button>
+        <button class="icon-btn-circle" id="notifBellBtn" title="Notifications">🔔</button>
       </div>
     </header>
 
-    <!-- Navigation Tabs (FR-03) -->
-    <nav class="app-nav">
-      <button class="nav-tab active" data-view="viewCalendar">
-        <span class="tab-icon">📅</span> Calendar
-      </button>
-      <button class="nav-tab" data-view="viewTasks">
-        <span class="tab-icon">📋</span> My Tasks
-      </button>
-      <button class="nav-tab" data-view="viewProfile">
-        <span class="tab-icon">👤</span> Profile
-      </button>
-    </nav>
+    <!-- Search Bar Bar -->
+    <div class="search-bar-wrapper">
+      <input type="text" id="taskSearchInput" class="rounded-search-input" placeholder="Search task, users... etc">
+    </div>
 
-    <!-- Main Content Area -->
-    <main class="app-main">
+    <!-- Main Screen Views Body -->
+    <div class="app-content-body">
 
-      <!-- TAB 1: CALENDAR VIEW (FR-02, FR-04, FR-05, FR-06, FR-08) -->
-      <section id="viewCalendar" class="tab-view active">
+      <!-- SCREEN 1: HOME DASHBOARD (viewHome) -->
+      <section id="viewHome" class="screen-view active">
+        
+        <!-- Filter Tabs Row -->
+        <div class="filter-tabs-row" style="padding:0;">
+          <button class="filter-pill-tab active">Today</button>
+          <button class="filter-pill-tab">Upcoming</button>
+        </div>
 
-        <!-- AI Smart Input Card (FR-08) -->
-        <div class="ai-smart-card">
-          <div class="ai-header">
-            <span class="ai-title">⚡ AI Smart Quick Input</span>
-            <span style="font-size:11px; color:var(--text-tertiary);">Format Recommendations</span>
+        <!-- AI Smart Quick Input Card -->
+        <div style="background:var(--card-bg); border-radius:var(--radius-card); padding:16px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:var(--primary-purple); text-transform:uppercase; letter-spacing:0.5px;">⚡ AI Smart Quick Input</span>
+            <span style="font-size:11px; color:var(--text-muted);">Try typing examples</span>
           </div>
-          <div class="ai-input-group">
-            <input type="text" id="aiBarInput" class="ai-input" placeholder="Type naturally e.g. 'Work meeting tomorrow at 3pm'...">
-            <button class="pill-btn primary" id="aiBarBtn">Parse & Add</button>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="aiBarInput" class="rounded-search-input" style="background-image:none; padding-left:14px;" placeholder="Type e.g. 'Work meeting tomorrow at 3pm'...">
+            <button class="purple-primary-btn" id="aiBarBtn" style="width:auto; padding:10px 16px; font-size:13px;">Add</button>
           </div>
-          
-          <!-- Recommendation Format Pills -->
           <div class="ai-recommendations">
-            <span class="rec-label">Try Examples:</span>
-            <button class="ai-rec-pill" data-example="Work meeting tomorrow at 3pm">Work meeting tomorrow at 3pm</button>
-            <button class="ai-rec-pill" data-example="Calculus Exam on 2026-08-25 at 10am">Calculus Exam 2026-08-25 10am</button>
-            <button class="ai-rec-pill" data-example="Project presentation next Friday">Project next Friday</button>
-            <button class="ai-rec-pill" data-example="Assignment due 25th August at 11:59pm">Assignment 25th Aug 11:59pm</button>
+            <button class="ai-rec-pill" data-example="Work meeting tomorrow at 3pm">Work 3pm</button>
+            <button class="ai-rec-pill" data-example="Calculus Exam on 2026-08-25 at 10am">Calculus Exam</button>
+            <button class="ai-rec-pill" data-example="Project presentation next Friday">Project Friday</button>
           </div>
-
           <div id="aiPreviewBox" class="ai-preview-box"></div>
         </div>
 
-        <!-- Month Calendar Header & Controls (FR-05) -->
-        <div class="calendar-controls">
-          <div class="month-selector">
-            <button class="icon-btn" id="prevMonthBtn" title="Previous Month">❮</button>
-            <button class="month-title-btn" id="monthTitleBtn">August 2026</button>
-            <button class="icon-btn" id="nextMonthBtn" title="Next Month">❯</button>
+        <!-- My Tasks Section -->
+        <div class="section-header">
+          <h2 class="section-title"><span>📋</span> My Tasks</h2>
+          <a class="section-link" id="viewAllTasksLink">View all</a>
+        </div>
+        <div id="homeTasksList" style="display:flex; flex-direction:column; gap:12px;"></div>
+
+        <!-- Shared Tasks Section -->
+        <div class="section-header" style="margin-top:8px;">
+          <h2 class="section-title"><span>👥</span> Shared Task</h2>
+          <a class="section-link">View all</a>
+        </div>
+        <div id="homeSharedTasksList" style="display:flex; flex-direction:column; gap:12px;"></div>
+
+      </section>
+
+      <!-- SCREEN 2: FOCUS TIMER (viewFocus) -->
+      <section id="viewFocus" class="screen-view">
+        
+        <div class="section-header">
+          <h2 class="section-title"><span>⌛</span> Timer</h2>
+          <button class="icon-btn-circle">⋮</button>
+        </div>
+
+        <div class="timer-container-card">
+          
+          <div class="timer-mode-tabs">
+            <button class="timer-mode-btn active" data-timer-mode="timer">Timer</button>
+            <button class="timer-mode-btn" data-timer-mode="short">Short break</button>
+            <button class="timer-mode-btn" data-timer-mode="long">Long break</button>
           </div>
-          <div class="calendar-quick-actions">
-            <button class="pill-btn" id="todayBtn">Today</button>
+
+          <!-- Large Countdown Ring -->
+          <div class="large-timer-ring-wrapper">
+            <svg class="large-ring-svg" viewBox="0 0 220 220">
+              <circle class="large-ring-bg" cx="110" cy="110" r="100" fill="none"/>
+              <circle id="timerProgressRing" class="large-ring-fill" cx="110" cy="110" r="100" fill="none"
+                      stroke-dasharray="628" stroke-dashoffset="0"/>
+            </svg>
+            <div class="large-countdown-text" id="timerDisplay">00:29:59</div>
+          </div>
+
+          <!-- Timer Controls -->
+          <div class="timer-controls-row">
+            <button class="timer-btn-action pause" id="timerPauseBtn">PAUSE</button>
+            <button class="timer-btn-action stop" id="timerStopBtn">STOP</button>
+          </div>
+
+          <!-- Focusing On Task -->
+          <div class="focusing-on-card">
+            <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Focusing On</div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-primary);" id="focusingTaskTitle">Make Flashcards</div>
+            <select id="focusingTaskSelect" class="rounded-form-input" style="margin-top:8px; font-size:12px; padding:6px 12px;"></select>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SCREEN 3: MY TASKS & CATEGORIES (viewTasks) -->
+      <section id="viewTasks" class="screen-view">
+        
+        <div class="section-header">
+          <h2 class="section-title">My Tasks</h2>
+          <div style="display:flex; gap:8px;">
+            <button class="icon-btn-circle" id="calendarToggleBtn" title="Month Calendar">📅</button>
+            <button class="icon-btn-circle">⋮</button>
           </div>
         </div>
 
-        <!-- Responsive Split Grid (Adapts automatically between portrait & landscape) -->
-        <div class="calendar-view-split">
-          
-          <!-- Month Calendar Grid Card (FR-04) -->
+        <button class="add-task-card-btn" onclick="document.getElementById('fabCreateTaskBtn').click()">
+          <span>+</span> Add New Task
+        </button>
+
+        <!-- Categorized Cards Container -->
+        <div id="myTasksCategoriesContainer" style="display:flex; flex-direction:column; gap:16px;"></div>
+
+        <!-- Integrated Month Calendar Grid View -->
+        <div id="calendarViewContainer" style="display:none; flex-direction:column; gap:16px;">
+          <div class="calendar-controls">
+            <div class="month-selector">
+              <button class="icon-btn-circle" id="prevMonthBtn">❮</button>
+              <button class="month-title-btn" id="monthTitleBtn">August 2026</button>
+              <button class="icon-btn-circle" id="nextMonthBtn">❯</button>
+            </div>
+            <button class="purple-primary-btn" id="todayBtn" style="width:auto; padding:6px 16px;">Today</button>
+          </div>
           <div class="calendar-card">
             <div class="calendar-days-header">
-              <div>Sun</div>
-              <div>Mon</div>
-              <div>Tue</div>
-              <div>Wed</div>
-              <div>Thu</div>
-              <div>Fri</div>
-              <div>Sat</div>
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
             <div id="calendarGrid" class="calendar-grid"></div>
           </div>
-
-          <!-- Tap-to-View Day Schedule Panel (FR-06) -->
           <div class="day-schedule-panel" id="daySchedulePanel">
             <div class="panel-header">
               <div class="panel-title" id="dayScheduleTitle">Tasks for Today</div>
-              <button class="pill-btn" id="addDayTaskBtn">+ Add Task for Date</button>
+              <button class="purple-primary-btn" id="addDayTaskBtn" style="width:auto; padding:6px 12px; font-size:12px;">+ Add Task</button>
             </div>
             <div id="dayTaskList" class="task-list"></div>
           </div>
-
         </div>
 
       </section>
 
-      <!-- TAB 2: MY TASKS VIEW (FR-07, FR-09) -->
-      <section id="viewTasks" class="tab-view">
-
-        <!-- Controls Bar: Search & Status Filters -->
-        <div class="task-controls-bar">
-          <div class="search-box">
-            <span>🔍</span>
-            <input type="text" id="taskSearchInput" class="search-input" placeholder="Search tasks by title, note, or tag...">
-          </div>
-
-          <div class="status-filter-group">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="todo">To Do</button>
-            <button class="filter-btn" data-filter="inprogress">In Progress</button>
-            <button class="filter-btn" data-filter="completed">Completed</button>
-          </div>
+      <!-- SCREEN 4: ANALYTICS DASHBOARD (viewAnalytics) -->
+      <section id="viewAnalytics" class="screen-view">
+        
+        <div class="section-header">
+          <h2 class="section-title"><span>📊</span> Analytics</h2>
+          <button class="icon-btn-circle">⋮</button>
         </div>
 
-        <!-- My Tasks List Container -->
-        <div id="myTasksList" class="task-list"></div>
-
-      </section>
-
-      <!-- TAB 3: PROFILE & METRICS VIEW -->
-      <section id="viewProfile" class="tab-view">
-
-        <div class="profile-dashboard">
-          
-          <!-- Account Card -->
-          <div class="profile-card">
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-              <div style="display:flex; align-items:center; gap:14px;">
-                <div style="width:48px; height:48px; border-radius:50%; background:var(--accent-primary); color:var(--text-inverse); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700;">
-                  👤
-                </div>
-                <div>
-                  <h2 style="font-size:18px; font-weight:700;" id="accountName">Guest User</h2>
-                  <p style="font-size:12px; color:var(--text-tertiary);" id="accountEmail">Sign in to save tasks across devices</p>
-                </div>
-              </div>
-              <button class="pill-btn primary" id="authActionButton">Sign In / Register</button>
-            </div>
-          </div>
-
-          <!-- User Metrics Card -->
-          <div class="profile-card">
-            <h2 style="font-size:16px; font-weight:700;">Productivity Metrics</h2>
-            <div class="stats-grid">
-              <div class="stat-box">
-                <div class="stat-number" id="statTotalTasks">0</div>
-                <div class="stat-label">Total Tasks</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-number" id="statCompletedTasks">0</div>
-                <div class="stat-label">Completed</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-number" id="statInProgressTasks">0</div>
-                <div class="stat-label">In Progress</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-number" id="statCompletionRate">0%</div>
-                <div class="stat-label">Completion Rate</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Preferences & App Management -->
-          <div class="profile-card">
-            <h2 style="font-size:16px; font-weight:700;">App & Data Actions</h2>
+        <div class="analytics-card">
+          <div class="analytics-top-grid">
             
-            <div style="display:flex; flex-direction:column; gap:12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-                <div>
-                  <strong>Walkthrough Intro</strong>
-                  <div style="font-size:12px; color:var(--text-tertiary);">Re-run the initial 3-step walkthrough screens.</div>
-                </div>
-                <button class="pill-btn" id="replayOnboardingBtn">Replay Walkthrough</button>
+            <div class="donut-chart-container">
+              <svg viewBox="0 0 100 100" style="width:120px; height:120px; transform:rotate(-90deg);">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--progress-ring-bg)" stroke-width="12"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary-purple)" stroke-width="12" stroke-dasharray="251" stroke-dashoffset="70"/>
+              </svg>
+              <div class="donut-center-text">
+                <div class="donut-center-number" id="analyticsDonutTotal">58</div>
+                <div class="donut-center-label">Total Tasks</div>
               </div>
+            </div>
 
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
-                <div>
-                  <strong>Browser Notifications & Alarms</strong>
-                  <div style="font-size:12px; color:var(--text-tertiary);" id="notifStatusText">Enable native desktop alarms for scheduled tasks.</div>
-                </div>
-                <button class="pill-btn primary" id="enableNotificationsBtn">Enable Notifications</button>
+            <div class="analytics-mini-stats">
+              <div class="mini-stat-item">
+                <span style="color:var(--text-muted);">My Tasks</span>
+                <strong id="analyticsMyTasksCount" style="color:var(--primary-purple);">30</strong>
               </div>
+              <div class="mini-stat-item">
+                <span style="color:var(--text-muted);">Shared Tasks</span>
+                <strong id="analyticsSharedCount" style="color:var(--primary-purple);">15</strong>
+              </div>
+              <div class="mini-stat-item">
+                <span style="color:var(--text-muted);">Uncompleted</span>
+                <strong id="analyticsUncompletedCount" style="color:var(--primary-purple);">30</strong>
+              </div>
+            </div>
 
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
-                <div>
-                  <strong>Sample Demo Data</strong>
-                  <div style="font-size:12px; color:var(--text-tertiary);">Optionally populate initial sample student tasks.</div>
-                </div>
-                <button class="pill-btn" id="loadSampleDataBtn">Load Sample Tasks</button>
-              </div>
+          </div>
 
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
-                <div>
-                  <strong>Backup & Restore</strong>
-                  <div style="font-size:12px; color:var(--text-tertiary);">Export or import your tasks in JSON format.</div>
-                </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="pill-btn" id="exportDataBtn">Export JSON</button>
-                  <button class="pill-btn" id="importDataBtn">Import JSON</button>
-                  <input type="file" id="importFileInput" accept=".json" style="display:none;">
-                </div>
-              </div>
-
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border-subtle); padding-top:12px;">
-                <div>
-                  <strong>Clear Task Data</strong>
-                  <div style="font-size:12px; color:var(--text-tertiary);">Remove all tasks from current account.</div>
-                </div>
-                <button class="pill-btn" id="clearUserDataBtn" style="border-color:#DC2626; color:#DC2626;">Clear Tasks</button>
-              </div>
+          <!-- Quick Stats Row -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
+              <div style="font-size:16px;">🔥</div>
+              <div style="font-size:13px; font-weight:800;">3 Days</div>
+              <div style="font-size:10px; color:var(--text-muted);">Streak</div>
+            </div>
+            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
+              <div style="font-size:16px;">⏰</div>
+              <div style="font-size:13px; font-weight:800;">~1h 10m</div>
+              <div style="font-size:10px; color:var(--text-muted);">Per Task</div>
+            </div>
+            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
+              <div style="font-size:16px;">📅</div>
+              <div style="font-size:13px; font-weight:800;">Tuesday</div>
+              <div style="font-size:10px; color:var(--text-muted);">Most Active</div>
             </div>
           </div>
 
-          <!-- PRD Document Info -->
-          <div style="text-align:center; font-size:12px; color:var(--text-tertiary); padding:10px;">
-            Taskly v1.0 • Grey & White Aesthetic Theme (NFR-01)
+          <!-- Weekly Activity Bar Chart -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h3 style="font-size:14px; font-weight:800;">Weekly Task Activity</h3>
+              <span style="font-size:11px; color:var(--text-muted);">Updated 1h ago</span>
+            </div>
+            <div class="weekly-bar-chart" id="weeklyBarChartContainer"></div>
+          </div>
+
+          <!-- Completion Rate Footer -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px;">
+            <div>
+              <div style="font-size:24px; font-weight:800; color:var(--primary-purple);" id="analyticsRateText">72%</div>
+              <div style="font-size:11px; color:var(--text-muted);">Completion Rate</div>
+            </div>
+            <div style="display:flex; gap:12px; font-size:11px; font-weight:600;">
+              <span>🟣 Active</span>
+              <span style="color:var(--text-muted);">⚪ Inactive</span>
+            </div>
           </div>
 
         </div>
 
       </section>
 
-    </main>
+      <!-- SCREEN 5: PROFILE & SETTINGS (viewProfile) -->
+      <section id="viewProfile" class="screen-view">
+        
+        <!-- Hero User Card -->
+        <div class="profile-hero-card">
+          <div class="profile-avatar-large" id="profileAvatar">T</div>
+          <div>
+            <h2 style="font-size:20px; font-weight:800;" id="profileName">Teefah</h2>
+            <p style="font-size:13px; color:var(--text-muted);" id="profileEmail">teefah@gmail.com</p>
+          </div>
+          <button class="purple-primary-btn" id="editProfileBtn" style="width:auto; padding:8px 24px; font-size:13px;">Edit profile</button>
+        </div>
 
-  </div>
+        <!-- Custom Color Theme Palette Picker -->
+        <div class="settings-group-card">
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:6px;">Choose Accent Color Theme</div>
+          <div class="color-palette-picker">
+            <button class="color-swatch-btn" data-color-palette="purple" style="background:#6C5CE7;" title="Soft Purple"></button>
+            <button class="color-swatch-btn" data-color-palette="blue" style="background:#2563EB;" title="Ocean Blue"></button>
+            <button class="color-swatch-btn" data-color-palette="green" style="background:#059669;" title="Emerald Green"></button>
+            <button class="color-swatch-btn" data-color-palette="rose" style="background:#E11D48;" title="Sunset Rose"></button>
+            <button class="color-swatch-btn" data-color-palette="amber" style="background:#D97706;" title="Warm Amber"></button>
+            <button class="color-swatch-btn" data-color-palette="slate" style="background:#1E293B;" title="Slate Monochrome"></button>
+          </div>
+        </div>
 
-  <!-- AUTHENTICATION MODAL DIALOG -->
-  <div id="authModalOverlay" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title">Account Sign In</h3>
-        <button class="icon-btn" id="authModalCloseBtn" style="width:30px; height:30px;">✕</button>
-      </div>
+        <!-- Settings Group Card -->
+        <div class="settings-group-card">
+          <div class="settings-row">
+            <div class="settings-row-left"><span>📁</span> Shared Members</div>
+            <span style="color:var(--text-muted);">→</span>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-left"><span>👥</span> Shared with Me</div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="task-category-pill" style="background:var(--primary-purple); color:#fff;">5</span>
+              <span style="color:var(--text-muted);">→</span>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-left"><span>📋</span> Completed Tasks</div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="task-category-pill">48</span>
+              <span style="color:var(--text-muted);">→</span>
+            </div>
+          </div>
+        </div>
 
-      <!-- Auth Tab Switcher -->
-      <div class="auth-tabs">
-        <button class="auth-tab-btn active" data-auth-tab="login">Sign In</button>
-        <button class="auth-tab-btn" data-auth-tab="register">Create Account</button>
-      </div>
+        <!-- Preferences Group Card -->
+        <div class="settings-group-card">
+          <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Preferences</div>
+          <div class="settings-row">
+            <div class="settings-row-left"><span>🔔</span> Push notifications</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="pushNotifToggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-left"><span>🌙</span> Dark mode</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="darkModeToggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row" id="logoutBtn" style="color:var(--status-danger);">
+            <div class="settings-row-left" style="color:var(--status-danger);"><span>🚪</span> Logout</div>
+          </div>
+        </div>
 
-      <!-- Sign In Form -->
-      <form id="loginForm" style="display:flex; flex-direction:column; gap:12px;">
-        <div class="form-group">
-          <label class="form-label" for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" class="form-input" placeholder="user@example.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
-        </div>
-        <div class="modal-footer" style="margin-top:8px;">
-          <button type="submit" class="pill-btn primary" style="width:100%;">Sign In</button>
-        </div>
-      </form>
+      </section>
 
-      <!-- Register Form -->
-      <form id="registerForm" style="display:none; flex-direction:column; gap:12px;">
-        <div class="form-group">
-          <label class="form-label" for="registerName">Full Name</label>
-          <input type="text" id="registerName" class="form-input" placeholder="Alex Johnson" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="registerEmail">Email Address</label>
-          <input type="email" id="registerEmail" class="form-input" placeholder="user@example.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="registerPassword">Password</label>
-          <input type="password" id="registerPassword" class="form-input" placeholder="••••••••" required>
-        </div>
-        <div class="modal-footer" style="margin-top:8px;">
-          <button type="submit" class="pill-btn primary" style="width:100%;">Create Account</button>
-        </div>
-      </form>
     </div>
+
+    <!-- Floating Circular '+' Action Button -->
+    <button class="fab-circle-btn" id="fabCreateTaskBtn" title="Create New Task">+</button>
+
+    <!-- FIXED BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav-bar">
+      <button class="bottom-nav-item active" data-screen="viewHome">
+        <svg class="nav-svg-icon" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>Home</span>
+      </button>
+
+      <button class="bottom-nav-item" data-screen="viewFocus">
+        <svg class="nav-svg-icon" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Timer</span>
+      </button>
+
+      <button class="bottom-nav-item" data-screen="viewTasks">
+        <svg class="nav-svg-icon" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <span>Tasks</span>
+      </button>
+
+      <button class="bottom-nav-item" data-screen="viewAnalytics">
+        <svg class="nav-svg-icon" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>Analytics</span>
+      </button>
+
+      <button class="bottom-nav-item" data-screen="viewProfile">
+        <svg class="nav-svg-icon" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
   </div>
 
-  <!-- ONBOARDING WALKTHROUGH OVERLAY MODAL (FR-01) -->
-  <div id="onboardingOverlay" class="onboarding-overlay hidden">
-    <div class="onboarding-card">
-      <div class="onboarding-header">
-        <button id="onboardingSkipBtn" class="skip-btn">Skip</button>
-      </div>
-
-      <div class="slides-viewport">
-        <div id="slidesTrack" class="slides-track">
-          
-          <!-- Slide 1 -->
-          <div class="slide-item">
-            <div class="slide-graphic">📋</div>
-            <h2 class="slide-title">Welcome to Taskly</h2>
-            <p class="slide-desc">
-              A clean, distraction-free task planner designed for students, professionals, and daily organization.
-            </p>
-          </div>
-
-          <!-- Slide 2 -->
-          <div class="slide-item">
-            <div class="slide-graphic">📅</div>
-            <h2 class="slide-title">Integrated Month View</h2>
-            <p class="slide-desc">
-              Visualize your entire month at a glance. Plot assignments, exams, and projects with tap-to-view date details.
-            </p>
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="slide-item">
-            <div class="slide-graphic">⚡</div>
-            <h2 class="slide-title">AI Smart Input</h2>
-            <p class="slide-desc">
-              Type naturally like "Exam next Friday at 10am" and let AI parse and schedule your tasks effortlessly.
-            </p>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="onboarding-footer">
-        <div class="pagination-dots">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-        <button id="onboardingNextBtn" class="pill-btn primary">Next</button>
-      </div>
+  <!-- ONBOARDING SCREEN OVERLAY (Screen 1 & 11) -->
+  <div id="onboardingOverlay" class="onboarding-full-overlay hidden">
+    <div class="onboarding-illustration">📋</div>
+    <div class="onboarding-text-block">
+      <h2 class="onboarding-hero-title">Manage Your <span style="color:var(--primary-purple);">Task</span></h2>
+      <p class="onboarding-hero-desc">
+        Take control of your time and get intentional about every move. With the right plan, you don't just stay busy — you stay focused.
+      </p>
     </div>
+    <button class="purple-primary-btn" id="onboardingGetStartedBtn" style="max-width:320px;">Get Started</button>
   </div>
 
-  <!-- TASK CREATE / EDIT MODAL DIALOG (FR-07) -->
+  <!-- TASK CREATE / EDIT MODAL DIALOG -->
   <div id="taskModalOverlay" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modalTitle">Create New Task</h3>
-        <button class="icon-btn" id="modalCloseBtn" style="width:30px; height:30px;">✕</button>
+    <div class="modal-card-purple">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:18px; font-weight:800;" id="modalTitle">Create Task</h3>
+        <button class="icon-btn-circle" id="modalCloseBtn" style="width:32px; height:32px;">✕</button>
       </div>
 
-      <form id="taskForm">
-        <div class="form-group" style="margin-bottom:12px;">
+      <form id="taskForm" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="form-group">
           <label class="form-label" for="inputTaskTitle">Task Title *</label>
-          <input type="text" id="inputTaskTitle" class="form-input" placeholder="e.g. Software Engineering Assignment" required>
+          <input type="text" id="inputTaskTitle" class="rounded-form-input" placeholder="e.g. Call Bethel" required>
         </div>
 
-        <div class="form-row" style="margin-bottom:12px;">
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="inputTaskCategory">Category</label>
-            <select id="inputTaskCategory" class="form-select">
+            <select id="inputTaskCategory" class="rounded-form-input">
+              <option value="School Work">School Work</option>
+              <option value="House Chores">House Chores</option>
+              <option value="Shopping List">Shopping List</option>
               <option value="Work">Work</option>
-              <option value="Assignment">Assignment</option>
-              <option value="Exam">Exam</option>
-              <option value="Project">Project</option>
               <option value="Personal">Personal</option>
             </select>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="inputTaskPriority">Priority</label>
-            <select id="inputTaskPriority" class="form-select">
+            <select id="inputTaskPriority" class="rounded-form-input">
               <option value="High">High</option>
               <option value="Medium" selected>Medium</option>
               <option value="Low">Low</option>
@@ -387,62 +405,109 @@
           </div>
         </div>
 
-        <div class="form-row" style="margin-bottom:12px;">
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="inputTaskDueDate">Due Date</label>
-            <input type="date" id="inputTaskDueDate" class="form-input" required>
+            <input type="date" id="inputTaskDueDate" class="rounded-form-input" required>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="inputTaskDueTime">Due Time</label>
-            <input type="time" id="inputTaskDueTime" class="form-input">
+            <input type="time" id="inputTaskDueTime" class="rounded-form-input">
           </div>
         </div>
 
-        <div class="form-group" style="margin-bottom:12px;">
+        <div class="form-group">
           <label class="form-label" for="inputTaskReminder">Reminder Alarm</label>
-          <select id="inputTaskReminder" class="form-select">
+          <select id="inputTaskReminder" class="rounded-form-input">
             <option value="at_event" selected>🔔 At time of event</option>
             <option value="5_min">🔔 5 minutes before</option>
             <option value="15_min">🔔 15 minutes before</option>
             <option value="1_hour">🔔 1 hour before</option>
-            <option value="1_day">🔔 1 day before</option>
             <option value="none">🔕 No reminder</option>
           </select>
         </div>
 
-        <div class="form-group" style="margin-bottom:16px;">
-          <label class="form-label" for="inputTaskNotes">Optional Notes</label>
-          <textarea id="inputTaskNotes" class="form-textarea" rows="3" placeholder="Additional details, guidelines, or location..."></textarea>
+        <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
+          <input type="checkbox" id="inputTaskIsShared" style="width:18px; height:18px;">
+          <label for="inputTaskIsShared" style="font-size:13px; font-weight:600; color:var(--text-primary);">Share with members (@Mojo, @Tee)</label>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="pill-btn" id="modalCancelBtn">Cancel</button>
-          <button type="submit" class="pill-btn primary">Save Task</button>
+        <div class="form-group">
+          <label class="form-label" for="inputTaskNotes">Description / Notes</label>
+          <textarea id="inputTaskNotes" class="rounded-form-input" rows="2" placeholder="Optional notes..."></textarea>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button type="button" class="purple-primary-btn" id="modalCancelBtn" style="background:var(--soft-lavender); color:var(--primary-purple-dark);">Cancel</button>
+          <button type="submit" class="purple-primary-btn">Save Task</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- IN-APP ALARM / REMINDER MODAL -->
+  <!-- AUTHENTICATION MODAL -->
+  <div id="authModalOverlay" class="modal-overlay hidden">
+    <div class="modal-card-purple">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:18px; font-weight:800;">Account Sign In</h3>
+        <button class="icon-btn-circle" id="authModalCloseBtn" style="width:32px; height:32px;">✕</button>
+      </div>
+
+      <div style="display:flex; background:var(--light-lavender-bg); border-radius:var(--radius-full); padding:4px;">
+        <button class="timer-mode-btn active auth-tab-btn" data-auth-tab="login" style="flex:1;">Sign In</button>
+        <button class="timer-mode-btn auth-tab-btn" data-auth-tab="register" style="flex:1;">Create Account</button>
+      </div>
+
+      <form id="loginForm" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" class="rounded-form-input" placeholder="teefah@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="rounded-form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="purple-primary-btn" style="margin-top:8px;">Sign In</button>
+      </form>
+
+      <form id="registerForm" style="display:none; flex-direction:column; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="registerName">Full Name</label>
+          <input type="text" id="registerName" class="rounded-form-input" placeholder="Teefah" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="registerEmail">Email Address</label>
+          <input type="email" id="registerEmail" class="rounded-form-input" placeholder="teefah@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" class="rounded-form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="purple-primary-btn" style="margin-top:8px;">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ALARM / REMINDER MODAL -->
   <div id="alarmModalOverlay" class="modal-overlay hidden">
-    <div class="modal-card" style="text-align:center; border:2px solid var(--accent-primary);">
+    <div class="modal-card-purple" style="text-align:center;">
       <div style="font-size:48px; animation: ring 1s infinite alternate;">⏰</div>
-      <h3 style="font-size:20px; font-weight:700; color:var(--text-primary);" id="alarmTitle">Task Alarm Reminder</h3>
-      <p style="font-size:13px; color:var(--text-secondary);" id="alarmTime">Due now</p>
+      <h3 style="font-size:20px; font-weight:800; color:var(--text-primary);" id="alarmTitle">Task Alarm Reminder</h3>
+      <p style="font-size:13px; color:var(--text-muted);" id="alarmTime">Due now</p>
 
       <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
-        <button class="pill-btn primary" id="alarmCompleteBtn">✓ Mark as Completed</button>
-        <button class="pill-btn" id="alarmSnoozeBtn">🔔 Snooze (5 mins)</button>
-        <button class="pill-btn" id="alarmDismissBtn" style="border-color:var(--border-main);">Dismiss</button>
+        <button class="purple-primary-btn" id="alarmCompleteBtn">✓ Mark as Completed</button>
+        <button class="purple-primary-btn" id="alarmSnoozeBtn" style="background:var(--soft-lavender); color:var(--primary-purple-dark);">🔔 Snooze (5 mins)</button>
+        <button class="purple-primary-btn" id="alarmDismissBtn" style="background:transparent; color:var(--text-muted); border:1px solid var(--border-main);">Dismiss</button>
       </div>
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <!-- TOAST CONTAINER -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <!-- Application Logic -->
+  <!-- Application Modules -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

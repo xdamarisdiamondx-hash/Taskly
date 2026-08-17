@@ -1,6 +1,6 @@
 /**
- * Task Management Module (FR-07 & FR-09)
- * Handles task CRUD modal, status updates ("To Do", "In Progress", "Completed"), search & filter.
+ * Task Management Module for Taskly
+ * Handles Home Dashboard Task lists, My Tasks Category Groups, Circular Progress Indicators, and Task Modal CRUD.
  */
 
 import { Storage } from './storage.js';
@@ -15,12 +15,12 @@ export const TaskManager = {
   init(onTaskChangedCallback) {
     this.onTaskChangedCallback = onTaskChangedCallback;
 
-    // Elements for My Tasks View
+    // Elements
+    this.homeTasksList = document.getElementById('homeTasksList');
+    this.homeSharedTasksList = document.getElementById('homeSharedTasksList');
+    this.myTasksCategoriesContainer = document.getElementById('myTasksCategoriesContainer');
     this.searchInput = document.getElementById('taskSearchInput');
-    this.filterBtns = document.querySelectorAll('.filter-btn');
-    this.myTasksList = document.getElementById('myTasksList');
-    this.createTaskHeaderBtn = document.getElementById('createTaskHeaderBtn');
-    this.createTaskFloatingBtn = document.getElementById('createTaskFloatingBtn');
+    this.fabBtn = document.getElementById('fabCreateTaskBtn');
 
     // Modal Elements
     this.modalOverlay = document.getElementById('taskModalOverlay');
@@ -29,7 +29,7 @@ export const TaskManager = {
     this.modalCloseBtn = document.getElementById('modalCloseBtn');
     this.modalCancelBtn = document.getElementById('modalCancelBtn');
 
-    // Form inputs
+    // Inputs
     this.inputTitle = document.getElementById('inputTaskTitle');
     this.inputCategory = document.getElementById('inputTaskCategory');
     this.inputPriority = document.getElementById('inputTaskPriority');
@@ -37,44 +37,29 @@ export const TaskManager = {
     this.inputDueTime = document.getElementById('inputTaskDueTime');
     this.inputReminder = document.getElementById('inputTaskReminder');
     this.inputNotes = document.getElementById('inputTaskNotes');
+    this.inputIsShared = document.getElementById('inputTaskIsShared');
 
-    // AI Smart Bar Elements
+    // AI Smart Input Bar Elements
     this.aiBarInput = document.getElementById('aiBarInput');
     this.aiBarBtn = document.getElementById('aiBarBtn');
     this.aiPreviewBox = document.getElementById('aiPreviewBox');
 
     this.bindEvents();
-    this.renderMyTasksView();
+    this.renderAllViews();
   },
 
   bindEvents() {
-    // Search input
     if (this.searchInput) {
       this.searchInput.addEventListener('input', (e) => {
         this.searchQuery = e.target.value.toLowerCase().trim();
-        this.renderMyTasksView();
+        this.renderAllViews();
       });
     }
 
-    // Filter status tabs
-    this.filterBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        this.filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.currentFilter = btn.getAttribute('data-filter') || 'all';
-        this.renderMyTasksView();
-      });
-    });
-
-    // Create task trigger buttons
-    if (this.createTaskHeaderBtn) {
-      this.createTaskHeaderBtn.addEventListener('click', () => this.openCreateModal());
-    }
-    if (this.createTaskFloatingBtn) {
-      this.createTaskFloatingBtn.addEventListener('click', () => this.openCreateModal());
+    if (this.fabBtn) {
+      this.fabBtn.addEventListener('click', () => this.openCreateModal());
     }
 
-    // Modal close buttons
     if (this.modalCloseBtn) {
       this.modalCloseBtn.addEventListener('click', () => this.closeModal());
     }
@@ -87,7 +72,6 @@ export const TaskManager = {
       });
     }
 
-    // Task Form Submit
     if (this.taskForm) {
       this.taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -95,7 +79,7 @@ export const TaskManager = {
       });
     }
 
-    // AI Smart Input Bar (FR-08)
+    // AI Smart Input
     if (this.aiBarBtn && this.aiBarInput) {
       const handleAISubmit = () => {
         const query = this.aiBarInput.value;
@@ -108,7 +92,7 @@ export const TaskManager = {
             priority: parsed.priority,
             dueDate: parsed.dueDate,
             dueTime: parsed.dueTime,
-            notes: `Created via AI Smart Input: "${query}"`
+            notes: `Parsed via AI Input: "${query}"`
           });
           this.aiBarInput.value = '';
           if (this.aiPreviewBox) this.aiPreviewBox.classList.remove('active');
@@ -121,12 +105,11 @@ export const TaskManager = {
         if (e.key === 'Enter') handleAISubmit();
       });
 
-      // Recommendation Pills click handler
       document.querySelectorAll('.ai-rec-pill').forEach(pill => {
         pill.addEventListener('click', () => {
-          const exampleText = pill.getAttribute('data-example');
-          if (exampleText) {
-            this.aiBarInput.value = exampleText;
+          const ex = pill.getAttribute('data-example');
+          if (ex) {
+            this.aiBarInput.value = ex;
             this.aiBarInput.dispatchEvent(new Event('input'));
             this.aiBarInput.focus();
           }
@@ -135,7 +118,7 @@ export const TaskManager = {
 
       this.aiBarInput.addEventListener('input', (e) => {
         const query = e.target.value;
-        if (!query.trim() || query.length < 4) {
+        if (!query.trim() || query.length < 3) {
           if (this.aiPreviewBox) this.aiPreviewBox.classList.remove('active');
           return;
         }
@@ -146,13 +129,11 @@ export const TaskManager = {
               <strong>Parsed Preview:</strong> ${escapeHtml(parsed.title)} 
               <span style="opacity:0.8;">[${parsed.category} | ${parsed.dueDate} at ${parsed.dueTime}]</span>
             </div>
-            <button class="pill-btn primary" id="aiQuickAddBtn" style="padding:4px 10px; font-size:11px;">Confirm & Add</button>
+            <button class="purple-primary-btn" id="aiQuickAddBtn" style="padding:4px 12px; font-size:11px; width:auto;">Confirm & Add</button>
           `;
           this.aiPreviewBox.classList.add('active');
           const quickBtn = document.getElementById('aiQuickAddBtn');
-          if (quickBtn) {
-            quickBtn.addEventListener('click', handleAISubmit);
-          }
+          if (quickBtn) quickBtn.addEventListener('click', handleAISubmit);
         }
       });
     }
@@ -160,18 +141,18 @@ export const TaskManager = {
 
   openCreateModal(prefillDate = null) {
     this.editingTaskId = null;
-    this.modalTitle.textContent = 'Create New Task';
-    this.taskForm.reset();
+    if (this.modalTitle) this.modalTitle.textContent = 'Create New Task';
+    if (this.taskForm) this.taskForm.reset();
 
     const todayStr = new Date().toISOString().split('T')[0];
-    this.inputDueDate.value = prefillDate || todayStr;
-    this.inputDueTime.value = '12:00';
+    if (this.inputDueDate) this.inputDueDate.value = prefillDate || todayStr;
+    if (this.inputDueTime) this.inputDueTime.value = '10:00';
+    if (this.inputCategory) this.inputCategory.value = 'School Work';
+    if (this.inputPriority) this.inputPriority.value = 'Medium';
     if (this.inputReminder) this.inputReminder.value = 'at_event';
-    this.inputCategory.value = 'Assignment';
-    this.inputPriority.value = 'Medium';
 
-    this.modalOverlay.classList.remove('hidden');
-    this.inputTitle.focus();
+    if (this.modalOverlay) this.modalOverlay.classList.remove('hidden');
+    if (this.inputTitle) this.inputTitle.focus();
   },
 
   openEditModal(taskId) {
@@ -180,22 +161,22 @@ export const TaskManager = {
     if (!task) return;
 
     this.editingTaskId = taskId;
-    this.modalTitle.textContent = 'Edit Task';
+    if (this.modalTitle) this.modalTitle.textContent = 'Edit Task';
 
-    this.inputTitle.value = task.title || '';
-    this.inputCategory.value = task.category || 'Assignment';
-    this.inputPriority.value = task.priority || 'Medium';
-    this.inputDueDate.value = task.dueDate || new Date().toISOString().split('T')[0];
-    this.inputDueTime.value = task.dueTime || '12:00';
+    if (this.inputTitle) this.inputTitle.value = task.title || '';
+    if (this.inputCategory) this.inputCategory.value = task.category || 'School Work';
+    if (this.inputPriority) this.inputPriority.value = task.priority || 'Medium';
+    if (this.inputDueDate) this.inputDueDate.value = task.dueDate || new Date().toISOString().split('T')[0];
+    if (this.inputDueTime) this.inputDueTime.value = task.dueTime || '10:00';
     if (this.inputReminder) this.inputReminder.value = task.reminderSetting || 'at_event';
-    this.inputNotes.value = task.notes || '';
+    if (this.inputNotes) this.inputNotes.value = task.notes || '';
+    if (this.inputIsShared) this.inputIsShared.checked = !!task.isShared;
 
-    this.modalOverlay.classList.remove('hidden');
-    this.inputTitle.focus();
+    if (this.modalOverlay) this.modalOverlay.classList.remove('hidden');
   },
 
   closeModal() {
-    this.modalOverlay.classList.add('hidden');
+    if (this.modalOverlay) this.modalOverlay.classList.add('hidden');
     this.editingTaskId = null;
   },
 
@@ -210,115 +191,134 @@ export const TaskManager = {
       dueDate: this.inputDueDate.value,
       dueTime: this.inputDueTime.value,
       reminderSetting: this.inputReminder ? this.inputReminder.value : 'at_event',
-      notes: this.inputNotes.value.trim()
+      notes: this.inputNotes ? this.inputNotes.value.trim() : '',
+      isShared: this.inputIsShared ? this.inputIsShared.checked : false,
+      assignees: this.inputIsShared && this.inputIsShared.checked ? ['@Me', '@Mojo', '@Tee'] : ['@Me']
     };
 
     if (this.editingTaskId) {
       Storage.updateTask(this.editingTaskId, taskData);
-      this.notifyChanged('Task updated successfully');
+      this.notifyChanged('Task updated!');
     } else {
       Storage.addTask(taskData);
-      this.notifyChanged('Task created successfully');
+      this.notifyChanged('Task created!');
     }
 
     this.closeModal();
   },
 
-  cycleTaskStatus(taskId) {
+  toggleTaskStatus(taskId) {
     const tasks = Storage.getTasks();
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
-    const statusMap = {
-      todo: 'inprogress',
-      inprogress: 'completed',
-      completed: 'todo'
-    };
-
-    const nextStatus = statusMap[task.status] || 'inprogress';
+    const nextStatus = task.status === 'completed' ? 'todo' : 'completed';
     Storage.updateTask(taskId, { status: nextStatus });
-    this.notifyChanged(`Task marked as ${nextStatus === 'completed' ? 'Completed' : (nextStatus === 'inprogress' ? 'In Progress' : 'To Do')}`);
+    this.notifyChanged(nextStatus === 'completed' ? 'Task completed! 🎉' : 'Task uncompleted');
   },
 
   deleteTask(taskId) {
-    if (confirm('Are you sure you want to delete this task?')) {
+    if (confirm('Delete this task?')) {
       Storage.deleteTask(taskId);
       this.notifyChanged('Task deleted');
     }
   },
 
   notifyChanged(msg) {
-    this.renderMyTasksView();
+    this.renderAllViews();
     if (this.onTaskChangedCallback) {
       this.onTaskChangedCallback(msg);
     }
   },
 
-  renderMyTasksView() {
-    if (!this.myTasksList) return;
+  renderAllViews() {
+    this.renderHomeDashboard();
+    this.renderMyTasksCategorizedView();
+  },
 
+  renderHomeDashboard() {
     let tasks = Storage.getTasks();
 
-    // Filter by status tab
-    if (this.currentFilter !== 'all') {
-      tasks = tasks.filter(t => t.status === this.currentFilter);
-    }
-
-    // Filter by search query
     if (this.searchQuery) {
       tasks = tasks.filter(t => 
         (t.title && t.title.toLowerCase().includes(this.searchQuery)) ||
-        (t.notes && t.notes.toLowerCase().includes(this.searchQuery)) ||
         (t.category && t.category.toLowerCase().includes(this.searchQuery))
       );
     }
 
-    this.myTasksList.innerHTML = '';
+    const myTasks = tasks.filter(t => !t.isShared);
+    const sharedTasks = tasks.filter(t => t.isShared);
 
-    if (tasks.length === 0) {
-      this.myTasksList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📋</div>
-          <div>No tasks found matching your filter.</div>
-        </div>
-      `;
-      return;
+    // Render My Tasks on Home
+    if (this.homeTasksList) {
+      this.homeTasksList.innerHTML = '';
+      if (myTasks.length === 0) {
+        this.homeTasksList.innerHTML = `
+          <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+            No personal tasks yet. Tap + to add one!
+          </div>
+        `;
+      } else {
+        myTasks.forEach(task => {
+          this.homeTasksList.appendChild(this.createTaskCardElement(task));
+        });
+      }
     }
 
-    tasks.forEach(task => {
-      const item = this.createTaskCardElement(task);
-      this.myTasksList.appendChild(item);
-    });
+    // Render Shared Tasks on Home
+    if (this.homeSharedTasksList) {
+      this.homeSharedTasksList.innerHTML = '';
+      if (sharedTasks.length === 0) {
+        this.homeSharedTasksList.innerHTML = `
+          <div class="shared-task-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div class="task-title">Track water intake</div>
+                <div class="task-sub-meta">Daily hydration goal</div>
+              </div>
+              <span class="task-category-pill">Health</span>
+            </div>
+            <div class="shared-avatars-row">
+              <div class="avatars-group">
+                <div class="mini-avatar">@Me</div>
+                <div class="mini-avatar">@Mojo</div>
+                <div class="mini-avatar">@Tee</div>
+              </div>
+              <span style="font-size:11px; font-weight:700; color:var(--primary-purple);">In Progress</span>
+            </div>
+          </div>
+        `;
+      } else {
+        sharedTasks.forEach(task => {
+          this.homeSharedTasksList.appendChild(this.createSharedTaskCardElement(task));
+        });
+      }
+    }
   },
 
   createTaskCardElement(task) {
     const el = document.createElement('div');
-    el.className = 'task-item';
+    el.className = 'task-card-item';
 
-    const tagClass = `tag-${(task.category || 'personal').toLowerCase()}`;
+    const isDone = task.status === 'completed';
+    const isHighPriority = task.priority === 'High';
 
     el.innerHTML = `
-      <div class="task-left">
-        <div class="status-checkbox ${task.status}" data-action="toggle-status" data-id="${task.id}">
-          ${task.status === 'completed' ? '✓' : (task.status === 'inprogress' ? '•' : '')}
+      <div class="task-card-left">
+        <div class="circular-checkbox ${isDone ? 'checked' : ''}" data-action="toggle-status" data-id="${task.id}">
+          ${isDone ? '✓' : ''}
         </div>
-        <div class="task-content-details">
-          <div class="task-title-text ${task.status === 'completed' ? 'completed' : ''}">${escapeHtml(task.title)}</div>
-          <div class="task-meta-info">
-            <span class="task-tag ${tagClass}">${task.category || 'Personal'}</span>
-            ${task.dueDate ? `<span>📅 ${task.dueDate}</span>` : ''}
+        <div style="min-width:0; flex:1;">
+          <div class="task-title ${isDone ? 'completed' : ''}">${escapeHtml(task.title)}</div>
+          <div class="task-sub-meta">
             ${task.dueTime ? `<span>🕒 ${task.dueTime}</span>` : ''}
-            ${task.priority ? `<span>⚡ ${task.priority}</span>` : ''}
+            <span class="task-category-pill">${escapeHtml(task.category || 'Personal')}</span>
           </div>
-          ${task.notes ? `<div style="font-size:12px; color:var(--text-tertiary); margin-top:2px;">${escapeHtml(task.notes)}</div>` : ''}
         </div>
       </div>
-      <div class="task-right-actions">
-        <span class="task-status-pill ${task.status}" data-action="cycle-status" data-id="${task.id}">
-          ${task.status === 'completed' ? 'Completed' : (task.status === 'inprogress' ? 'In Progress' : 'To Do')}
-        </span>
-        <button class="icon-btn" data-action="edit-task" data-id="${task.id}" title="Edit" style="width:32px; height:32px;">✏️</button>
-        <button class="icon-btn" data-action="delete-task" data-id="${task.id}" title="Delete" style="width:32px; height:32px;">🗑️</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        ${isHighPriority ? `<span title="High Priority" style="color:var(--status-danger); font-size:14px;">⚠️</span>` : ''}
+        <button class="icon-btn-circle" data-action="edit-task" data-id="${task.id}" style="width:32px; height:32px; font-size:12px;">✏️</button>
       </div>
     `;
 
@@ -328,16 +328,123 @@ export const TaskManager = {
       const action = actionEl.getAttribute('data-action');
       const id = actionEl.getAttribute('data-id');
 
-      if (action === 'toggle-status' || action === 'cycle-status') {
-        this.cycleTaskStatus(id);
-      } else if (action === 'edit-task') {
-        this.openEditModal(id);
-      } else if (action === 'delete-task') {
-        this.deleteTask(id);
-      }
+      if (action === 'toggle-status') this.toggleTaskStatus(id);
+      else if (action === 'edit-task') this.openEditModal(id);
     });
 
     return el;
+  },
+
+  createSharedTaskCardElement(task) {
+    const el = document.createElement('div');
+    el.className = 'shared-task-card';
+
+    const assignees = task.assignees || ['@Me', '@Mojo'];
+    const avatarsHtml = assignees.map(a => `<div class="mini-avatar">${escapeHtml(a)}</div>`).join('');
+
+    el.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="task-title">${escapeHtml(task.title)}</div>
+          <div class="task-sub-meta">🕒 ${task.dueTime || 'All Day'}</div>
+        </div>
+        <span class="task-category-pill">${escapeHtml(task.category || 'Shared')}</span>
+      </div>
+      <div class="shared-avatars-row">
+        <div class="avatars-group">${avatarsHtml}</div>
+        <span style="font-size:11px; font-weight:700; color:var(--primary-purple);">${task.status === 'completed' ? 'Completed' : 'In Progress'}</span>
+      </div>
+    `;
+    return el;
+  },
+
+  renderMyTasksCategorizedView() {
+    if (!this.myTasksCategoriesContainer) return;
+
+    let tasks = Storage.getTasks();
+    if (this.searchQuery) {
+      tasks = tasks.filter(t => t.title.toLowerCase().includes(this.searchQuery));
+    }
+
+    // Group tasks by category
+    const categoriesMap = {};
+    tasks.forEach(task => {
+      const cat = task.category || 'School Work';
+      if (!categoriesMap[cat]) categoriesMap[cat] = [];
+      categoriesMap[cat].push(task);
+    });
+
+    // Default categories if empty
+    if (Object.keys(categoriesMap).length === 0) {
+      categoriesMap['School Work'] = [];
+      categoriesMap['House Chores'] = [];
+      categoriesMap['Shopping List'] = [];
+    }
+
+    this.myTasksCategoriesContainer.innerHTML = '';
+
+    Object.keys(categoriesMap).forEach(catName => {
+      const catTasks = categoriesMap[catName];
+      const totalCat = catTasks.length;
+      const completedCat = catTasks.filter(t => t.status === 'completed').length;
+      const percent = totalCat > 0 ? Math.round((completedCat / totalCat) * 100) : 0;
+      const strokeDashoffset = 138 * (1 - (percent / 100)); // Circumference 2*pi*22 = 138
+
+      const card = document.createElement('div');
+      card.className = 'category-group-card';
+
+      let tasksHtml = '';
+      if (catTasks.length === 0) {
+        tasksHtml = `<div style="font-size:12px; color:var(--text-muted);">No tasks in ${escapeHtml(catName)}</div>`;
+      } else {
+        catTasks.forEach(t => {
+          const isDone = t.status === 'completed';
+          tasksHtml += `
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="circular-checkbox ${isDone ? 'checked' : ''}" data-action="toggle-status" data-id="${t.id}">
+                  ${isDone ? '✓' : ''}
+                </div>
+                <span class="task-title ${isDone ? 'completed' : ''}" style="font-size:14px;">${escapeHtml(t.title)}</span>
+              </div>
+              <span style="font-size:11px; color:var(--text-muted);">${t.dueTime || ''}</span>
+            </div>
+          `;
+        });
+      }
+
+      card.innerHTML = `
+        <div class="category-card-header">
+          <div>
+            <h3 style="font-size:16px; font-weight:800; color:var(--text-primary);">${escapeHtml(catName)}</h3>
+            <span style="font-size:12px; color:var(--text-muted);">${completedCat} of ${totalCat} completed</span>
+          </div>
+
+          <div class="progress-circle-wrapper">
+            <svg class="progress-circle-svg" viewBox="0 0 54 54">
+              <circle class="progress-ring-bg" cx="27" cy="27" r="22" fill="none"/>
+              <circle class="progress-ring-fill" cx="27" cy="27" r="22" fill="none"
+                      stroke-dasharray="138" stroke-dashoffset="${strokeDashoffset}"/>
+            </svg>
+            <div class="progress-circle-text">${percent}%</div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:4px; margin-top:8px;">
+          ${tasksHtml}
+        </div>
+      `;
+
+      card.addEventListener('click', (e) => {
+        const actionEl = e.target.closest('[data-action]');
+        if (!actionEl) return;
+        const action = actionEl.getAttribute('data-action');
+        const id = actionEl.getAttribute('data-id');
+        if (action === 'toggle-status') this.toggleTaskStatus(id);
+      });
+
+      this.myTasksCategoriesContainer.appendChild(card);
+    });
   }
 };
 
