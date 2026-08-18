@@ -56,6 +56,13 @@ class App {
         this.showToast(`Switched to ${next === 'dark' ? 'Dark' : 'Light'} theme`);
       });
     }
+
+    const notifBellBtn = document.getElementById('notifBellBtn');
+    if (notifBellBtn) {
+      notifBellBtn.addEventListener('click', () => {
+        Notifications.showHistoryModal();
+      });
+    }
   }
 
   initNavigation() {

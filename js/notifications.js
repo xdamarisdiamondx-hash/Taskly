@@ -1,6 +1,7 @@
 /**
  * Alarm & Notification Reminder Engine for Taskly
- * Supports Web Notifications API, Web Audio API synthesised chime, and in-app Alarm banner.
+ * Supports Web Notifications API, Web Audio API synthesised chime, in-app Alarm banner,
+ * and Notification History drawer.
  */
 
 import { Storage } from './storage.js';
@@ -8,7 +9,7 @@ import { Storage } from './storage.js';
 export const Notifications = {
   checkIntervalId: null,
   audioCtx: null,
-  triggeredAlarms: new Set(), // Track task IDs triggered in current session
+  triggeredAlarms: new Set(),
 
   init(onTaskUpdatedCallback) {
     this.onTaskUpdatedCallback = onTaskUpdatedCallback;
@@ -19,8 +20,77 @@ export const Notifications = {
     this.alarmCompleteBtn = document.getElementById('alarmCompleteBtn');
     this.alarmDismissBtn = document.getElementById('alarmDismissBtn');
 
+    // Notification History Modal Elements
+    this.notifHistoryOverlay = document.getElementById('notifHistoryOverlay');
+    this.notifHistoryCloseBtn = document.getElementById('notifHistoryCloseBtn');
+    this.notifHistoryList = document.getElementById('notifHistoryList');
+    this.clearNotifHistoryBtn = document.getElementById('clearNotifHistoryBtn');
+
     this.bindEvents();
     this.startScheduler();
+  },
+
+  getHistory() {
+    const data = localStorage.getItem('taskly_notifications_history');
+    if (!data) return [];
+    try { return JSON.parse(data); } catch (e) { return []; }
+  },
+
+  addHistory(title, text) {
+    const list = this.getHistory();
+    list.unshift({
+      id: 'notif-' + Date.now(),
+      title,
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    });
+    localStorage.setItem('taskly_notifications_history', JSON.stringify(list.slice(0, 20)));
+  },
+
+  clearHistory() {
+    localStorage.removeItem('taskly_notifications_history');
+    this.renderHistory();
+  },
+
+  showHistoryModal() {
+    if (!this.notifHistoryOverlay) return;
+    this.renderHistory();
+    this.notifHistoryOverlay.classList.remove('hidden');
+  },
+
+  hideHistoryModal() {
+    if (this.notifHistoryOverlay) {
+      this.notifHistoryOverlay.classList.add('hidden');
+    }
+  },
+
+  renderHistory() {
+    if (!this.notifHistoryList) return;
+    const history = this.getHistory();
+    this.notifHistoryList.innerHTML = '';
+
+    if (history.length === 0) {
+      this.notifHistoryList.innerHTML = `
+        <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+          No previous notifications.
+        </div>
+      `;
+      return;
+    }
+
+    history.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'mini-stat-item';
+      el.style.marginBottom = '8px';
+      el.innerHTML = `
+        <div>
+          <strong style="display:block; color:var(--text-primary);">${item.title}</strong>
+          <span style="font-size:11px; color:var(--text-muted);">${item.text}</span>
+        </div>
+        <span style="font-size:10px; font-weight:700; color:var(--primary-purple);">${item.timestamp}</span>
+      `;
+      this.notifHistoryList.appendChild(el);
+    });
   },
 
   requestPermission() {
@@ -38,9 +108,7 @@ export const Notifications = {
 
   startScheduler() {
     if (this.checkIntervalId) clearInterval(this.checkIntervalId);
-    // Check every 10 seconds
     this.checkIntervalId = setInterval(() => this.checkScheduledAlarms(), 10000);
-    // Immediate check
     this.checkScheduledAlarms();
   },
 
@@ -56,7 +124,6 @@ export const Notifications = {
       const reminderSetting = task.reminderSetting || 'at_event';
       if (reminderSetting === 'none') return;
 
-      // Calculate scheduled target date & time
       const parts = task.dueDate.split('-');
       const timeParts = task.dueTime.split(':');
       const targetDate = new Date(
@@ -68,7 +135,6 @@ export const Notifications = {
         0
       );
 
-      // Offset based on reminder setting
       let offsetMinutes = 0;
       if (reminderSetting === '5_min') offsetMinutes = 5;
       else if (reminderSetting === '15_min') offsetMinutes = 15;
@@ -77,7 +143,6 @@ export const Notifications = {
 
       const reminderTime = new Date(targetDate.getTime() - offsetMinutes * 60000);
 
-      // Trigger if current time is past or equal to reminderTime (within a 5-minute window)
       const diffMs = now - reminderTime;
       if (diffMs >= 0 && diffMs <= 300000) {
         this.triggeredAlarms.add(task.id);
@@ -87,10 +152,11 @@ export const Notifications = {
   },
 
   triggerAlarm(task) {
-    // 1. Play Synthesized Alarm Chime Sound using Web Audio API
     this.playAlarmChime();
 
-    // 2. Trigger Browser Native Notification
+    // Store in Notification History
+    this.addHistory(`⏰ Reminder: ${task.title}`, `Due at ${task.dueTime} (${task.category || 'Task'})`);
+
     if (this.isPermissionGranted()) {
       try {
         new Notification(`⏰ Reminder: ${task.title}`, {
@@ -103,7 +169,6 @@ export const Notifications = {
       }
     }
 
-    // 3. Open In-App Alarm Dialog
     this.showAlarmModal(task);
   },
 
@@ -116,11 +181,8 @@ export const Notifications = {
       if (!this.audioCtx) return;
 
       const ctx = this.audioCtx;
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
+      if (ctx.state === 'suspended') ctx.resume();
 
-      // Play 3 pleasant melody beeps
       const playBeep = (freq, delay, duration) => {
         setTimeout(() => {
           const osc = ctx.createOscillator();
@@ -136,9 +198,9 @@ export const Notifications = {
         }, delay);
       };
 
-      playBeep(880, 0, 0.25);   // A5
-      playBeep(1046, 250, 0.25); // C6
-      playBeep(1318, 500, 0.4);  // E6
+      playBeep(880, 0, 0.25);
+      playBeep(1046, 250, 0.25);
+      playBeep(1318, 500, 0.4);
     } catch (e) {
       console.log('Audio playback prevented', e);
     }
@@ -165,7 +227,6 @@ export const Notifications = {
     if (this.alarmSnoozeBtn) {
       this.alarmSnoozeBtn.addEventListener('click', () => {
         if (this.activeTask) {
-          // Snooze: push target due time 5 minutes ahead
           const now = new Date();
           now.setMinutes(now.getMinutes() + 5);
           const hh = String(now.getHours()).padStart(2, '0');
@@ -191,6 +252,20 @@ export const Notifications = {
     if (this.alarmDismissBtn) {
       this.alarmDismissBtn.addEventListener('click', () => {
         this.hideAlarmModal();
+      });
+    }
+
+    if (this.notifHistoryCloseBtn) {
+      this.notifHistoryCloseBtn.addEventListener('click', () => this.hideHistoryModal());
+    }
+
+    if (this.clearNotifHistoryBtn) {
+      this.clearNotifHistoryBtn.addEventListener('click', () => this.clearHistory());
+    }
+
+    if (this.notifHistoryOverlay) {
+      this.notifHistoryOverlay.addEventListener('click', (e) => {
+        if (e.target === this.notifHistoryOverlay) this.hideHistoryModal();
       });
     }
   }

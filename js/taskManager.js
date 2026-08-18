@@ -17,7 +17,6 @@ export const TaskManager = {
 
     // Elements
     this.homeTasksList = document.getElementById('homeTasksList');
-    this.homeSharedTasksList = document.getElementById('homeSharedTasksList');
     this.myTasksCategoriesContainer = document.getElementById('myTasksCategoriesContainer');
     this.searchInput = document.getElementById('taskSearchInput');
     this.fabBtn = document.getElementById('fabCreateTaskBtn');
@@ -37,7 +36,6 @@ export const TaskManager = {
     this.inputDueTime = document.getElementById('inputTaskDueTime');
     this.inputReminder = document.getElementById('inputTaskReminder');
     this.inputNotes = document.getElementById('inputTaskNotes');
-    this.inputIsShared = document.getElementById('inputTaskIsShared');
 
     // AI Smart Input Bar Elements
     this.aiBarInput = document.getElementById('aiBarInput');
@@ -170,7 +168,6 @@ export const TaskManager = {
     if (this.inputDueTime) this.inputDueTime.value = task.dueTime || '10:00';
     if (this.inputReminder) this.inputReminder.value = task.reminderSetting || 'at_event';
     if (this.inputNotes) this.inputNotes.value = task.notes || '';
-    if (this.inputIsShared) this.inputIsShared.checked = !!task.isShared;
 
     if (this.modalOverlay) this.modalOverlay.classList.remove('hidden');
   },
@@ -191,9 +188,7 @@ export const TaskManager = {
       dueDate: this.inputDueDate.value,
       dueTime: this.inputDueTime.value,
       reminderSetting: this.inputReminder ? this.inputReminder.value : 'at_event',
-      notes: this.inputNotes ? this.inputNotes.value.trim() : '',
-      isShared: this.inputIsShared ? this.inputIsShared.checked : false,
-      assignees: this.inputIsShared && this.inputIsShared.checked ? ['@Me', '@Mojo', '@Tee'] : ['@Me']
+      notes: this.inputNotes ? this.inputNotes.value.trim() : ''
     };
 
     if (this.editingTaskId) {
@@ -239,58 +234,17 @@ export const TaskManager = {
   renderHomeDashboard() {
     let tasks = Storage.getTasks();
 
-    if (this.searchQuery) {
-      tasks = tasks.filter(t => 
-        (t.title && t.title.toLowerCase().includes(this.searchQuery)) ||
-        (t.category && t.category.toLowerCase().includes(this.searchQuery))
-      );
-    }
-
-    const myTasks = tasks.filter(t => !t.isShared);
-    const sharedTasks = tasks.filter(t => t.isShared);
-
-    // Render My Tasks on Home
     if (this.homeTasksList) {
       this.homeTasksList.innerHTML = '';
-      if (myTasks.length === 0) {
+      if (tasks.length === 0) {
         this.homeTasksList.innerHTML = `
           <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
-            No personal tasks yet. Tap + to add one!
+            No tasks yet. Tap + to add one!
           </div>
         `;
       } else {
-        myTasks.forEach(task => {
+        tasks.forEach(task => {
           this.homeTasksList.appendChild(this.createTaskCardElement(task));
-        });
-      }
-    }
-
-    // Render Shared Tasks on Home
-    if (this.homeSharedTasksList) {
-      this.homeSharedTasksList.innerHTML = '';
-      if (sharedTasks.length === 0) {
-        this.homeSharedTasksList.innerHTML = `
-          <div class="shared-task-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <div class="task-title">Track water intake</div>
-                <div class="task-sub-meta">Daily hydration goal</div>
-              </div>
-              <span class="task-category-pill">Health</span>
-            </div>
-            <div class="shared-avatars-row">
-              <div class="avatars-group">
-                <div class="mini-avatar">@Me</div>
-                <div class="mini-avatar">@Mojo</div>
-                <div class="mini-avatar">@Tee</div>
-              </div>
-              <span style="font-size:11px; font-weight:700; color:var(--primary-purple);">In Progress</span>
-            </div>
-          </div>
-        `;
-      } else {
-        sharedTasks.forEach(task => {
-          this.homeSharedTasksList.appendChild(this.createSharedTaskCardElement(task));
         });
       }
     }
@@ -332,29 +286,6 @@ export const TaskManager = {
       else if (action === 'edit-task') this.openEditModal(id);
     });
 
-    return el;
-  },
-
-  createSharedTaskCardElement(task) {
-    const el = document.createElement('div');
-    el.className = 'shared-task-card';
-
-    const assignees = task.assignees || ['@Me', '@Mojo'];
-    const avatarsHtml = assignees.map(a => `<div class="mini-avatar">${escapeHtml(a)}</div>`).join('');
-
-    el.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div class="task-title">${escapeHtml(task.title)}</div>
-          <div class="task-sub-meta">🕒 ${task.dueTime || 'All Day'}</div>
-        </div>
-        <span class="task-category-pill">${escapeHtml(task.category || 'Shared')}</span>
-      </div>
-      <div class="shared-avatars-row">
-        <div class="avatars-group">${avatarsHtml}</div>
-        <span style="font-size:11px; font-weight:700; color:var(--primary-purple);">${task.status === 'completed' ? 'Completed' : 'In Progress'}</span>
-      </div>
-    `;
     return el;
   },
 

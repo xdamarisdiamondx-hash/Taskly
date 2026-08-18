@@ -84,9 +84,10 @@ export const FocusTimer = {
       this.focusingTaskSelect.appendChild(opt);
     });
 
-    if (tasks.length > 0 && !this.activeTaskId) {
-      this.setActiveTask(tasks[0].id);
-      this.focusingTaskSelect.value = tasks[0].id;
+    if (tasks.length > 0 && this.activeTaskId) {
+      this.focusingTaskSelect.value = this.activeTaskId;
+    } else if (!this.activeTaskId) {
+      this.setActiveTask(null);
     }
   },
 
@@ -97,7 +98,7 @@ export const FocusTimer = {
     if (task && this.focusingTaskTitle) {
       this.focusingTaskTitle.textContent = task.title;
     } else if (this.focusingTaskTitle) {
-      this.focusingTaskTitle.textContent = 'Make Flashcards';
+      this.focusingTaskTitle.textContent = '';
     }
   },
 

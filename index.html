@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Taskly — Premium Task Manager & Productivity App</title>
-  <meta name="description" content="Manage your tasks with intentionality. Clean, soft purple task manager with Focus Timer, Analytics, Shared Tasks, and Calendar.">
+  <meta name="description" content="Manage your tasks with intentionality. Clean, soft purple task manager with Focus Timer, Analytics, and Calendar.">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -24,26 +24,15 @@
 
       <div class="header-actions-right">
         <button class="icon-btn-circle" id="themeToggleBtn" title="Toggle Light/Dark Mode">🌙</button>
-        <button class="icon-btn-circle" id="notifBellBtn" title="Notifications">🔔</button>
+        <button class="icon-btn-circle" id="notifBellBtn" title="Notification Reminders History">🔔</button>
       </div>
     </header>
-
-    <!-- Search Bar Bar -->
-    <div class="search-bar-wrapper">
-      <input type="text" id="taskSearchInput" class="rounded-search-input" placeholder="Search task, users... etc">
-    </div>
 
     <!-- Main Screen Views Body -->
     <div class="app-content-body">
 
       <!-- SCREEN 1: HOME DASHBOARD (viewHome) -->
       <section id="viewHome" class="screen-view active">
-        
-        <!-- Filter Tabs Row -->
-        <div class="filter-tabs-row" style="padding:0;">
-          <button class="filter-pill-tab active">Today</button>
-          <button class="filter-pill-tab">Upcoming</button>
-        </div>
 
         <!-- AI Smart Quick Input Card -->
         <div style="background:var(--card-bg); border-radius:var(--radius-card); padding:16px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:10px;">
@@ -70,13 +59,6 @@
         </div>
         <div id="homeTasksList" style="display:flex; flex-direction:column; gap:12px;"></div>
 
-        <!-- Shared Tasks Section -->
-        <div class="section-header" style="margin-top:8px;">
-          <h2 class="section-title"><span>👥</span> Shared Task</h2>
-          <a class="section-link">View all</a>
-        </div>
-        <div id="homeSharedTasksList" style="display:flex; flex-direction:column; gap:12px;"></div>
-
       </section>
 
       <!-- SCREEN 2: FOCUS TIMER (viewFocus) -->
@@ -102,7 +84,7 @@
               <circle id="timerProgressRing" class="large-ring-fill" cx="110" cy="110" r="100" fill="none"
                       stroke-dasharray="628" stroke-dashoffset="0"/>
             </svg>
-            <div class="large-countdown-text" id="timerDisplay">00:29:59</div>
+            <div class="large-countdown-text" id="timerDisplay">00:25:00</div>
           </div>
 
           <!-- Timer Controls -->
@@ -114,7 +96,7 @@
           <!-- Focusing On Task -->
           <div class="focusing-on-card">
             <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Focusing On</div>
-            <div style="font-size:16px; font-weight:800; color:var(--text-primary);" id="focusingTaskTitle">Make Flashcards</div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-primary); min-height:24px;" id="focusingTaskTitle"></div>
             <select id="focusingTaskSelect" class="rounded-form-input" style="margin-top:8px; font-size:12px; padding:6px 12px;"></select>
           </div>
 
@@ -131,6 +113,11 @@
             <button class="icon-btn-circle" id="calendarToggleBtn" title="Month Calendar">📅</button>
             <button class="icon-btn-circle">⋮</button>
           </div>
+        </div>
+
+        <!-- Search Bar Only Under Task Tab -->
+        <div class="search-bar-wrapper" style="padding:0;">
+          <input type="text" id="taskSearchInput" class="rounded-search-input" placeholder="Search tasks...">
         </div>
 
         <button class="add-task-card-btn" onclick="document.getElementById('fabCreateTaskBtn').click()">
@@ -181,55 +168,36 @@
             <div class="donut-chart-container">
               <svg viewBox="0 0 100 100" style="width:120px; height:120px; transform:rotate(-90deg);">
                 <circle cx="50" cy="50" r="40" fill="none" stroke="var(--progress-ring-bg)" stroke-width="12"/>
-                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary-purple)" stroke-width="12" stroke-dasharray="251" stroke-dashoffset="70"/>
+                <circle id="analyticsDonutCircleFill" cx="50" cy="50" r="40" fill="none" stroke="var(--primary-purple)" stroke-width="12" stroke-dasharray="251.327" stroke-dashoffset="251.327" style="transition: stroke-dashoffset 0.5s ease;"/>
               </svg>
               <div class="donut-center-text">
-                <div class="donut-center-number" id="analyticsDonutTotal">58</div>
+                <div class="donut-center-number" id="analyticsDonutTotal">0</div>
                 <div class="donut-center-label">Total Tasks</div>
               </div>
             </div>
 
             <div class="analytics-mini-stats">
               <div class="mini-stat-item">
-                <span style="color:var(--text-muted);">My Tasks</span>
-                <strong id="analyticsMyTasksCount" style="color:var(--primary-purple);">30</strong>
+                <span style="color:var(--text-muted);">Total Tasks</span>
+                <strong id="analyticsMyTasksCount" style="color:var(--primary-purple);">0</strong>
               </div>
               <div class="mini-stat-item">
-                <span style="color:var(--text-muted);">Shared Tasks</span>
-                <strong id="analyticsSharedCount" style="color:var(--primary-purple);">15</strong>
+                <span style="color:var(--text-muted);">Completed</span>
+                <strong id="analyticsCompletedCount" style="color:var(--status-success);">0</strong>
               </div>
               <div class="mini-stat-item">
                 <span style="color:var(--text-muted);">Uncompleted</span>
-                <strong id="analyticsUncompletedCount" style="color:var(--primary-purple);">30</strong>
+                <strong id="analyticsUncompletedCount" style="color:var(--status-warning);">0</strong>
               </div>
             </div>
 
-          </div>
-
-          <!-- Quick Stats Row -->
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
-              <div style="font-size:16px;">🔥</div>
-              <div style="font-size:13px; font-weight:800;">3 Days</div>
-              <div style="font-size:10px; color:var(--text-muted);">Streak</div>
-            </div>
-            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
-              <div style="font-size:16px;">⏰</div>
-              <div style="font-size:13px; font-weight:800;">~1h 10m</div>
-              <div style="font-size:10px; color:var(--text-muted);">Per Task</div>
-            </div>
-            <div style="background:var(--light-lavender-bg); padding:10px; border-radius:var(--radius-md); text-align:center;">
-              <div style="font-size:16px;">📅</div>
-              <div style="font-size:13px; font-weight:800;">Tuesday</div>
-              <div style="font-size:10px; color:var(--text-muted);">Most Active</div>
-            </div>
           </div>
 
           <!-- Weekly Activity Bar Chart -->
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <h3 style="font-size:14px; font-weight:800;">Weekly Task Activity</h3>
-              <span style="font-size:11px; color:var(--text-muted);">Updated 1h ago</span>
+              <span style="font-size:11px; color:var(--text-muted);">Past 4 Weeks</span>
             </div>
             <div class="weekly-bar-chart" id="weeklyBarChartContainer"></div>
           </div>
@@ -237,12 +205,12 @@
           <!-- Completion Rate Footer -->
           <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px;">
             <div>
-              <div style="font-size:24px; font-weight:800; color:var(--primary-purple);" id="analyticsRateText">72%</div>
+              <div style="font-size:24px; font-weight:800; color:var(--primary-purple);" id="analyticsRateText">0%</div>
               <div style="font-size:11px; color:var(--text-muted);">Completion Rate</div>
             </div>
             <div style="display:flex; gap:12px; font-size:11px; font-weight:600;">
-              <span>🟣 Active</span>
-              <span style="color:var(--text-muted);">⚪ Inactive</span>
+              <span>🟣 Completed</span>
+              <span style="color:var(--text-muted);">⚪ Pending</span>
             </div>
           </div>
 
@@ -273,28 +241,6 @@
             <button class="color-swatch-btn" data-color-palette="rose" style="background:#E11D48;" title="Sunset Rose"></button>
             <button class="color-swatch-btn" data-color-palette="amber" style="background:#D97706;" title="Warm Amber"></button>
             <button class="color-swatch-btn" data-color-palette="slate" style="background:#1E293B;" title="Slate Monochrome"></button>
-          </div>
-        </div>
-
-        <!-- Settings Group Card -->
-        <div class="settings-group-card">
-          <div class="settings-row">
-            <div class="settings-row-left"><span>📁</span> Shared Members</div>
-            <span style="color:var(--text-muted);">→</span>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-left"><span>👥</span> Shared with Me</div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="task-category-pill" style="background:var(--primary-purple); color:#fff;">5</span>
-              <span style="color:var(--text-muted);">→</span>
-            </div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-left"><span>📋</span> Completed Tasks</div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="task-category-pill">48</span>
-              <span style="color:var(--text-muted);">→</span>
-            </div>
           </div>
         </div>
 
@@ -428,11 +374,6 @@
           </select>
         </div>
 
-        <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
-          <input type="checkbox" id="inputTaskIsShared" style="width:18px; height:18px;">
-          <label for="inputTaskIsShared" style="font-size:13px; font-weight:600; color:var(--text-primary);">Share with members (@Mojo, @Tee)</label>
-        </div>
-
         <div class="form-group">
           <label class="form-label" for="inputTaskNotes">Description / Notes</label>
           <textarea id="inputTaskNotes" class="rounded-form-input" rows="2" placeholder="Optional notes..."></textarea>
@@ -443,6 +384,22 @@
           <button type="submit" class="purple-primary-btn">Save Task</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION REMINDERS HISTORY MODAL -->
+  <div id="notifHistoryOverlay" class="modal-overlay hidden">
+    <div class="modal-card-purple">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:18px; font-weight:800;">🔔 Reminder Alerts History</h3>
+        <button class="icon-btn-circle" id="notifHistoryCloseBtn" style="width:32px; height:32px;">✕</button>
+      </div>
+
+      <div id="notifHistoryList" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; margin:12px 0;"></div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="purple-primary-btn" id="clearNotifHistoryBtn" style="width:auto; padding:8px 16px; font-size:12px; background:var(--soft-lavender); color:var(--primary-purple-dark);">Clear History</button>
+      </div>
     </div>
   </div>
 
