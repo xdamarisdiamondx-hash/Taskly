@@ -23,8 +23,18 @@
       </div>
 
       <div class="header-actions-right">
-        <button class="icon-btn-circle" id="themeToggleBtn" title="Toggle Light/Dark Mode">🌙</button>
-        <button class="icon-btn-circle" id="notifBellBtn" title="Notification Reminders History">🔔</button>
+        <button class="icon-btn-circle" id="themeToggleBtn" title="Toggle Light/Dark Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <button class="icon-btn-circle" id="notifBellBtn" title="Notification Reminders History" style="position:relative;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.37 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.64 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"/>
+          </svg>
+          <span id="notifBadgeCounter" class="notif-badge-count">1</span>
+        </button>
       </div>
     </header>
 
@@ -37,7 +47,10 @@
         <!-- AI Smart Quick Input Card -->
         <div style="background:var(--card-bg); border-radius:var(--radius-card); padding:16px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:12px; font-weight:800; color:var(--primary-purple); text-transform:uppercase; letter-spacing:0.5px;">⚡ AI Smart Quick Input</span>
+            <span style="font-size:12px; font-weight:800; color:var(--primary-purple); text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14H12L11 22L21 10H12L13 2Z"/></svg>
+              AI Smart Quick Input
+            </span>
             <span style="font-size:11px; color:var(--text-muted);">Try typing examples</span>
           </div>
           <div style="display:flex; gap:8px;">
@@ -54,7 +67,10 @@
 
         <!-- My Tasks Section -->
         <div class="section-header">
-          <h2 class="section-title"><span>📋</span> My Tasks</h2>
+          <h2 class="section-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            My Tasks
+          </h2>
           <a class="section-link" id="viewAllTasksLink">View all</a>
         </div>
         <div id="homeTasksList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -65,8 +81,10 @@
       <section id="viewFocus" class="screen-view">
         
         <div class="section-header">
-          <h2 class="section-title"><span>⌛</span> Timer</h2>
-          <button class="icon-btn-circle">⋮</button>
+          <h2 class="section-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Timer
+          </h2>
         </div>
 
         <div class="timer-container-card">
@@ -109,10 +127,9 @@
         
         <div class="section-header">
           <h2 class="section-title">My Tasks</h2>
-          <div style="display:flex; gap:8px;">
-            <button class="icon-btn-circle" id="calendarToggleBtn" title="Month Calendar">📅</button>
-            <button class="icon-btn-circle">⋮</button>
-          </div>
+          <button class="icon-btn-circle" id="calendarToggleBtn" title="Month Calendar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </button>
         </div>
 
         <!-- Search Bar Only Under Task Tab -->
@@ -158,8 +175,10 @@
       <section id="viewAnalytics" class="screen-view">
         
         <div class="section-header">
-          <h2 class="section-title"><span>📊</span> Analytics</h2>
-          <button class="icon-btn-circle">⋮</button>
+          <h2 class="section-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Analytics
+          </h2>
         </div>
 
         <div class="analytics-card">
@@ -191,15 +210,6 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- Weekly Activity Bar Chart -->
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <h3 style="font-size:14px; font-weight:800;">Weekly Task Activity</h3>
-              <span style="font-size:11px; color:var(--text-muted);">Past 4 Weeks</span>
-            </div>
-            <div class="weekly-bar-chart" id="weeklyBarChartContainer"></div>
           </div>
 
           <!-- Completion Rate Footer -->
@@ -248,21 +258,30 @@
         <div class="settings-group-card">
           <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Preferences</div>
           <div class="settings-row">
-            <div class="settings-row-left"><span>🔔</span> Push notifications</div>
+            <div class="settings-row-left" style="display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Push notifications
+            </div>
             <label class="toggle-switch">
               <input type="checkbox" id="pushNotifToggle">
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="settings-row">
-            <div class="settings-row-left"><span>🌙</span> Dark mode</div>
+            <div class="settings-row-left" style="display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+              Dark mode
+            </div>
             <label class="toggle-switch">
               <input type="checkbox" id="darkModeToggle">
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="settings-row" id="logoutBtn" style="color:var(--status-danger);">
-            <div class="settings-row-left" style="color:var(--status-danger);"><span>🚪</span> Logout</div>
+            <div class="settings-row-left" style="color:var(--status-danger); display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              Logout
+            </div>
           </div>
         </div>
 
@@ -305,7 +324,9 @@
 
   <!-- ONBOARDING SCREEN OVERLAY (Screen 1 & 11) -->
   <div id="onboardingOverlay" class="onboarding-full-overlay hidden">
-    <div class="onboarding-illustration">📋</div>
+    <div class="onboarding-illustration">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    </div>
     <div class="onboarding-text-block">
       <h2 class="onboarding-hero-title">Manage Your <span style="color:var(--primary-purple);">Task</span></h2>
       <p class="onboarding-hero-desc">
@@ -366,11 +387,11 @@
         <div class="form-group">
           <label class="form-label" for="inputTaskReminder">Reminder Alarm</label>
           <select id="inputTaskReminder" class="rounded-form-input">
-            <option value="at_event" selected>🔔 At time of event</option>
-            <option value="5_min">🔔 5 minutes before</option>
-            <option value="15_min">🔔 15 minutes before</option>
-            <option value="1_hour">🔔 1 hour before</option>
-            <option value="none">🔕 No reminder</option>
+            <option value="at_event" selected>At time of event</option>
+            <option value="5_min">5 minutes before</option>
+            <option value="15_min">15 minutes before</option>
+            <option value="1_hour">1 hour before</option>
+            <option value="none">No reminder</option>
           </select>
         </div>
 
@@ -391,7 +412,10 @@
   <div id="notifHistoryOverlay" class="modal-overlay hidden">
     <div class="modal-card-purple">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:18px; font-weight:800;">🔔 Reminder Alerts History</h3>
+        <h3 style="font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--primary-purple)"><path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.37 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.64 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"/></svg>
+          Reminder Alerts History
+        </h3>
         <button class="icon-btn-circle" id="notifHistoryCloseBtn" style="width:32px; height:32px;">✕</button>
       </div>
 
@@ -449,13 +473,15 @@
   <!-- ALARM / REMINDER MODAL -->
   <div id="alarmModalOverlay" class="modal-overlay hidden">
     <div class="modal-card-purple" style="text-align:center;">
-      <div style="font-size:48px; animation: ring 1s infinite alternate;">⏰</div>
+      <div style="display:flex; justify-content:center; margin-bottom:12px;">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2" style="animation: ring 1s infinite alternate;"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3L2 6"/><path d="M19 3l3 3"/></svg>
+      </div>
       <h3 style="font-size:20px; font-weight:800; color:var(--text-primary);" id="alarmTitle">Task Alarm Reminder</h3>
       <p style="font-size:13px; color:var(--text-muted);" id="alarmTime">Due now</p>
 
-      <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
         <button class="purple-primary-btn" id="alarmCompleteBtn">✓ Mark as Completed</button>
-        <button class="purple-primary-btn" id="alarmSnoozeBtn" style="background:var(--soft-lavender); color:var(--primary-purple-dark);">🔔 Snooze (5 mins)</button>
+        <button class="purple-primary-btn" id="alarmSnoozeBtn" style="background:var(--soft-lavender); color:var(--primary-purple-dark);">Snooze (5 mins)</button>
         <button class="purple-primary-btn" id="alarmDismissBtn" style="background:transparent; color:var(--text-muted); border:1px solid var(--border-main);">Dismiss</button>
       </div>
     </div>

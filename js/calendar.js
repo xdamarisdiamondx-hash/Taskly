@@ -236,17 +236,21 @@ export const CalendarView = {
 
     const tagClass = `tag-${(task.category || 'personal').toLowerCase()}`;
 
+    const checkIcon = task.status === 'completed' ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+    const pencilIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const trashIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>`;
+
     el.innerHTML = `
       <div class="task-left">
         <div class="status-checkbox ${task.status}" data-action="toggle-status" data-id="${task.id}" title="Toggle status">
-          ${task.status === 'completed' ? '✓' : (task.status === 'inprogress' ? '•' : '')}
+          ${checkIcon}
         </div>
         <div class="task-content-details">
           <div class="task-title-text ${task.status === 'completed' ? 'completed' : ''}">${escapeHtml(task.title)}</div>
           <div class="task-meta-info">
             <span class="task-tag ${tagClass}">${task.category || 'Personal'}</span>
             ${task.dueTime ? `<span>🕒 ${task.dueTime}</span>` : ''}
-            ${task.priority ? `<span>⚡ ${task.priority}</span>` : ''}
+            ${task.priority ? `<span>${task.priority}</span>` : ''}
           </div>
         </div>
       </div>
@@ -254,8 +258,8 @@ export const CalendarView = {
         <span class="task-status-pill ${task.status}" data-action="cycle-status" data-id="${task.id}">
           ${task.status === 'completed' ? 'Completed' : (task.status === 'inprogress' ? 'In Progress' : 'To Do')}
         </span>
-        <button class="icon-btn" data-action="edit-task" data-id="${task.id}" title="Edit task" style="width:30px; height:30px;">✏️</button>
-        <button class="icon-btn" data-action="delete-task" data-id="${task.id}" title="Delete task" style="width:30px; height:30px;">🗑️</button>
+        <button class="icon-btn-circle" data-action="edit-task" data-id="${task.id}" title="Edit task" style="width:30px; height:30px;">${pencilIcon}</button>
+        <button class="icon-btn-circle" data-action="delete-task" data-id="${task.id}" title="Delete task" style="width:30px; height:30px;">${trashIcon}</button>
       </div>
     `;
 

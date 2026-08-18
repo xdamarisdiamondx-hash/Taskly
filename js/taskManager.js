@@ -257,22 +257,26 @@ export const TaskManager = {
     const isDone = task.status === 'completed';
     const isHighPriority = task.priority === 'High';
 
+    const checkIcon = isDone ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+    const pencilIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const warningIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--status-danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
     el.innerHTML = `
       <div class="task-card-left">
         <div class="circular-checkbox ${isDone ? 'checked' : ''}" data-action="toggle-status" data-id="${task.id}">
-          ${isDone ? '✓' : ''}
+          ${checkIcon}
         </div>
         <div style="min-width:0; flex:1;">
           <div class="task-title ${isDone ? 'completed' : ''}">${escapeHtml(task.title)}</div>
           <div class="task-sub-meta">
-            ${task.dueTime ? `<span>🕒 ${task.dueTime}</span>` : ''}
+            ${task.dueTime ? `<span style="display:flex; align-items:center; gap:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ${task.dueTime}</span>` : ''}
             <span class="task-category-pill">${escapeHtml(task.category || 'Personal')}</span>
           </div>
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
-        ${isHighPriority ? `<span title="High Priority" style="color:var(--status-danger); font-size:14px;">⚠️</span>` : ''}
-        <button class="icon-btn-circle" data-action="edit-task" data-id="${task.id}" style="width:32px; height:32px; font-size:12px;">✏️</button>
+        ${isHighPriority ? `<span title="High Priority">${warningIcon}</span>` : ''}
+        <button class="icon-btn-circle" data-action="edit-task" data-id="${task.id}" style="width:32px; height:32px;">${pencilIcon}</button>
       </div>
     `;
 

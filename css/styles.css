@@ -260,11 +260,30 @@ body {
   cursor: pointer;
   box-shadow: var(--shadow-subtle);
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .icon-btn-circle:hover {
   transform: translateY(-1px);
   background: var(--card-bg-subtle);
+}
+
+.notif-badge-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--card-bg);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
 }
 
 /* Search Bar */
