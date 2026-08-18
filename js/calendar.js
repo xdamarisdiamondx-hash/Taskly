@@ -21,13 +21,35 @@ export const CalendarView = {
     this.daySchedulePanel = document.getElementById('daySchedulePanel');
     this.dayScheduleTitle = document.getElementById('dayScheduleTitle');
     this.dayTaskList = document.getElementById('dayTaskList');
-    this.addDayTaskBtn = document.getElementById('addDayTaskBtn');
+    this.calendarToggleBtn = document.getElementById('calendarToggleBtn');
+    this.categoriesContainer = document.getElementById('myTasksCategoriesContainer');
+    this.calendarContainer = document.getElementById('calendarViewContainer');
 
     this.bindEvents();
     this.render();
   },
 
   bindEvents() {
+    if (this.calendarToggleBtn) {
+      this.calendarToggleBtn.addEventListener('click', () => {
+        if (!this.calendarContainer || !this.categoriesContainer) return;
+        const isCalendarVisible = this.calendarContainer.style.display === 'flex';
+
+        if (isCalendarVisible) {
+          this.calendarContainer.style.display = 'none';
+          this.categoriesContainer.style.display = 'flex';
+          this.calendarToggleBtn.style.background = 'var(--card-bg)';
+          this.calendarToggleBtn.style.color = 'var(--text-primary)';
+        } else {
+          this.calendarContainer.style.display = 'flex';
+          this.categoriesContainer.style.display = 'none';
+          this.calendarToggleBtn.style.background = 'var(--primary-purple)';
+          this.calendarToggleBtn.style.color = 'var(--text-inverse)';
+          this.render();
+        }
+      });
+    }
+
     if (this.prevMonthBtn) {
       this.prevMonthBtn.addEventListener('click', () => {
         this.currentDate.setMonth(this.currentDate.getMonth() - 1);
